@@ -7,48 +7,59 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; cursor: none !important; }
-    html, body { width: 100vw; height: 100vh; overflow: hidden; background: #d4cfc8; font-family: "Plus Jakarta Sans", sans-serif; color: #fff; }
+    html, body { width: 100vw; height: 100vh; overflow: hidden; background: #1a1a1a; font-family: "Plus Jakarta Sans", sans-serif; color: #fff; }
     #webgl-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 1; display: block; }
-    .film-grain { position: fixed; inset: 0; z-index: 4; pointer-events: none; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
+    
+    /* Grano de película */
+    .film-grain {
+      position: fixed;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
 
+    /* Viñeta */
+    .vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+    }
+
+    /* Overlay de inicio */
     #start-overlay {
       position: fixed;
       inset: 0;
       z-index: 100;
-      background: rgba(20, 18, 16, 0.92);
+      background: rgba(10, 10, 10, 0.9);
       backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: opacity 1.2s ease;
+      transition: opacity 1.5s ease;
       pointer-events: auto;
     }
     #start-overlay.hidden { opacity: 0; pointer-events: none; }
     #start-overlay h1 {
-      font-size: clamp(3rem, 8vw, 6rem);
+      font-size: clamp(3.5rem, 10vw, 7rem);
       font-weight: 800;
       letter-spacing: -0.04em;
-      background: linear-gradient(135deg, #f0ece6 0%, #b8b0a0 100%);
+      background: linear-gradient(135deg, #f0ece6 0%, #a09888 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 60px rgba(255,255,255,0.1);
-      margin-bottom: 0.5rem;
-    }
-    #start-overlay .sub {
-      font-size: clamp(1rem, 2vw, 1.6rem);
-      font-weight: 300;
-      color: rgba(255,255,255,0.5);
-      letter-spacing: 0.3em;
-      margin-bottom: 3rem;
-      text-transform: uppercase;
+      text-shadow: 0 0 80px rgba(255,255,255,0.08);
+      margin-bottom: 2rem;
     }
     #start-btn {
       padding: 1.2rem 3.5rem;
@@ -58,78 +69,208 @@
       color: #fff;
       font-size: 1.2rem;
       font-weight: 600;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.15em;
       cursor: pointer !important;
       transition: all 0.4s ease;
       backdrop-filter: blur(4px);
       font-family: "Plus Jakarta Sans", sans-serif;
+      text-transform: uppercase;
     }
-    #start-btn:hover { background: #fff; color: #111; transform: scale(1.05); border-color: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    #start-btn:hover { background: #fff; color: #111; transform: scale(1.05); border-color: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
 
-    #fluid-cursor { position: fixed; top: 0; left: 0; width: 8px; height: 8px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); box-shadow: 0 0 12px rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; transition: width 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease; }
-    #cursor-arrow-icon { width: 26px; height: 26px; stroke: #111; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transform: scale(0.4); transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    #fluid-cursor.bubble-mode { width: 76px; height: 76px; background: rgba(255,255,255,0.96); box-shadow: 0 15px 40px rgba(0,0,0,0.35); }
-    #fluid-cursor.bubble-mode #cursor-arrow-icon { opacity: 1; transform: scale(1); }
+    /* Cursor personalizado (solo visible, sin texto) */
+    #fluid-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      background: #fff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 12px rgba(255,255,255,0.7);
+      transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    }
+    #fluid-cursor.bubble-mode {
+      width: 50px;
+      height: 50px;
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 0 30px rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
     body.in-info-space #fluid-cursor { background: #111; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
 
-    .nav-arrow-hitbox { position: fixed; top: 50%; transform: translateY(-50%); width: 100px; height: 200px; z-index: 25; display: flex; align-items: center; justify-content: center; }
-    .arrow-left-box { left: 2.5vw; } .arrow-right-box { right: 2.5vw; }
-    .nav-arrow-glyph { width: 42px; height: 42px; stroke: rgba(255,255,255,0.65); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: opacity 0.25s ease, transform 0.25s ease; }
-    .nav-arrow-hitbox:hover .nav-arrow-glyph { opacity: 0; transform: scale(0.8); }
+    /* Flechas laterales (solo iconos, sin texto) */
+    .nav-arrow-hitbox {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 80px;
+      height: 160px;
+      z-index: 25;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .arrow-left-box { left: 2vw; }
+    .arrow-right-box { right: 2vw; }
+    .nav-arrow-glyph {
+      width: 36px;
+      height: 36px;
+      stroke: rgba(255,255,255,0.4);
+      stroke-width: 1.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .nav-arrow-hitbox:hover .nav-arrow-glyph {
+      opacity: 0.8;
+      transform: scale(1.2);
+    }
 
-    .hud-layer { position: fixed; inset: 0; z-index: 20; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: clamp(1.8rem, 3.2vw, 2.8rem) clamp(2rem, 3.8vw, 3.4rem); transition: opacity 0.4s ease; }
-    body.in-info-space .hud-layer { opacity: 0; pointer-events: none; }
-    .hud-top { display: flex; justify-content: space-between; align-items: flex-start; }
-    .brand-box { display: flex; flex-direction: column; gap: 0.15rem; }
-    .brand-title { font-size: clamp(1.4rem, 2.1vw, 1.8rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1; display: flex; align-items: flex-start; gap: 0.12rem; }
-    .brand-title sup { font-size: 0.52em; font-weight: 600; top: -0.35em; opacity: 0.9; }
-    .brand-sub { font-size: clamp(0.72rem, 0.9vw, 0.82rem); font-weight: 400; color: rgba(255,255,255,0.8); letter-spacing: 0.02em; font-family: "JetBrains Mono", monospace; }
-
-    .radar-widget { position: relative; width: 66px; height: 66px; border: 1px solid rgba(255,255,255,0.35); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 8px rgba(255,255,255,0.05); }
-    .radar-axis-h { position: absolute; width: 100%; height: 1px; background: rgba(255,255,255,0.22); }
-    .radar-axis-v { position: absolute; height: 100%; width: 1px; background: rgba(255,255,255,0.22); }
-    .radar-center-dot { width: 4px; height: 4px; background: #fff; border-radius: 50%; z-index: 2; }
-    .radar-blip { position: absolute; width: 7px; height: 7px; background: #ff3344; border-radius: 50%; box-shadow: 0 0 10px #ff3344, 0 0 4px #fff; transform: translate(0px, -25px); transition: transform 0.15s ease-out; z-index: 3; }
-    .radar-label { position: absolute; font-size: 0.56rem; font-family: "JetBrains Mono", monospace; font-weight: 500; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.05em; }
-    .lbl-jan { top: -15px; } .lbl-apr { right: -19px; } .lbl-jul { bottom: -15px; } .lbl-oct { left: -19px; }
-
-    .hud-bottom { display: grid; grid-template-columns: 1fr auto 1fr; align-items: flex-end; }
-    .slide-counter { font-family: "JetBrains Mono", monospace; font-size: clamp(1.2rem, 1.8vw, 1.5rem); font-weight: 700; letter-spacing: -0.03em; }
-    .slide-counter .slash { opacity: 0.4; font-weight: 300; margin: 0 0.2rem; }
-    .slide-counter .total { opacity: 0.5; font-weight: 400; font-size: 0.88em; }
-
-    .meta-center-info { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.45rem; }
-    .meta-date { font-size: clamp(0.95rem, 1.2vw, 1.12rem); color: rgba(255,255,255,0.85); font-weight: 400; letter-spacing: -0.01em; }
-    .meta-date strong { font-weight: 800; font-size: 1.25em; color: #fff; margin-left: 0.35rem; letter-spacing: -0.03em; }
-    .controls-hint { font-size: 0.68rem; color: rgba(255,255,255,0.6); font-family: "JetBrains Mono", monospace; letter-spacing: 0.04em; }
-    .copyright-line { font-size: clamp(0.66rem, 0.82vw, 0.76rem); color: rgba(255,255,255,0.6); letter-spacing: 0.02em; }
-
-    .sound-bars { display: flex; align-items: flex-end; gap: 3px; height: 16px; justify-self: end; opacity: 0.85; }
-    .bar { width: 2.2px; background: #fff; border-radius: 1px; animation: barJump 1.2s infinite ease-in-out; }
-    .bar:nth-child(1) { height: 35%; animation-delay: 0.1s; }
-    .bar:nth-child(2) { height: 75%; animation-delay: 0.35s; }
-    .bar:nth-child(3) { height: 100%; animation-delay: 0.2s; }
-    .bar:nth-child(4) { height: 50%; animation-delay: 0.45s; }
-    @keyframes barJump { 0%, 100% { transform: scaleY(0.25); transform-origin: bottom; } 50% { transform: scaleY(1); transform-origin: bottom; } }
-
-    #info-space { position: fixed; inset: 0; z-index: 50; background: #f7f6f2; color: #1a1a1a; display: flex; align-items: center; justify-content: center; padding: clamp(2rem, 5vw, 5rem); opacity: 0; pointer-events: none; transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1); }
+    /* Panel de información (se mantiene) */
+    #info-space {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: #f7f6f2;
+      color: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(2rem, 5vw, 5rem);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
     #info-space.active { opacity: 1; pointer-events: auto; }
-    .info-container { width: 100%; max-width: 1200px; display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
-    .info-artwork-box { width: 100%; max-width: 440px; justify-self: center; aspect-ratio: 3/4.2; background: #0d0d0d; padding: 12px; border-radius: 4px; box-shadow: 0 30px 70px rgba(0,0,0,0.25); }
-    .info-artwork-img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 2px; }
-    .info-details { display: flex; flex-direction: column; gap: 1.2rem; }
-    .info-badge { display: inline-flex; align-items: center; gap: 0.5rem; font-family: "JetBrains Mono", monospace; font-size: 0.8rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.08em; }
-    .info-badge::before { content: ''; width: 8px; height: 8px; background: #b93a2b; border-radius: 50%; }
-    .info-title { font-size: clamp(2rem, 3.2vw, 3rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; color: #111; }
-    .info-date-tag { font-family: "JetBrains Mono", monospace; font-size: 1rem; color: #666; font-weight: 500; }
-    .info-desc { font-size: clamp(0.95rem, 1.15vw, 1.08rem); line-height: 1.65; color: #444; font-weight: 400; max-width: 520px; margin-top: 0.5rem; }
-    .info-specs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 1.2rem; margin-top: 0.5rem; }
-    .spec-item { display: flex; flex-direction: column; gap: 0.2rem; }
-    .spec-label { font-size: 0.72rem; font-family: "JetBrains Mono", monospace; color: #888; text-transform: uppercase; }
-    .spec-val { font-size: 0.92rem; font-weight: 600; color: #1a1a1a; }
-    .btn-return-gallery { display: inline-flex; align-items: center; gap: 0.6rem; margin-top: 1rem; background: #1a1a1a; color: #fff; padding: 0.9rem 1.8rem; border-radius: 50px; font-size: 0.9rem; font-weight: 600; letter-spacing: -0.01em; transition: transform 0.25s ease, background 0.25s ease; align-self: flex-start; cursor: pointer !important; }
+    .info-container {
+      width: 100%;
+      max-width: 1200px;
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: clamp(2rem, 5vw, 5rem);
+      align-items: center;
+    }
+    .info-artwork-box {
+      width: 100%;
+      max-width: 440px;
+      justify-self: center;
+      aspect-ratio: 3/4.2;
+      background: #0d0d0d;
+      padding: 12px;
+      border-radius: 4px;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.25);
+    }
+    .info-artwork-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 2px;
+    }
+    .info-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .info-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .info-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: #b93a2b;
+      border-radius: 50%;
+    }
+    .info-title {
+      font-size: clamp(2rem, 3.2vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      color: #111;
+    }
+    .info-date-tag {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 1rem;
+      color: #666;
+      font-weight: 500;
+    }
+    .info-desc {
+      font-size: clamp(0.95rem, 1.15vw, 1.08rem);
+      line-height: 1.65;
+      color: #444;
+      font-weight: 400;
+      max-width: 520px;
+      margin-top: 0.5rem;
+    }
+    .info-specs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      padding-top: 1.2rem;
+      margin-top: 0.5rem;
+    }
+    .spec-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .spec-label {
+      font-size: 0.72rem;
+      font-family: "JetBrains Mono", monospace;
+      color: #888;
+      text-transform: uppercase;
+    }
+    .spec-val {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    .btn-return-gallery {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      background: #1a1a1a;
+      color: #fff;
+      padding: 0.9rem 1.8rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      transition: transform 0.25s ease, background 0.25s ease;
+      align-self: flex-start;
+      cursor: pointer !important;
+    }
     .btn-return-gallery:hover { background: #000; transform: translateY(-2px); }
-    .info-close-btn { position: absolute; top: 2.5rem; right: 3rem; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; cursor: pointer !important; transition: transform 0.3s ease, background 0.3s ease; }
+    .info-close-btn {
+      position: absolute;
+      top: 2.5rem;
+      right: 3rem;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer !important;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
     .info-close-btn:hover { transform: rotate(90deg) scale(1.1); background: rgba(0,0,0,0.06); }
     .info-close-btn svg { width: 20px; height: 20px; stroke: #1a1a1a; stroke-width: 2; }
   </style>
@@ -138,10 +279,10 @@
 
   <canvas id="webgl-canvas"></canvas>
   <div class="film-grain"></div>
+  <div class="vignette"></div>
 
   <div id="start-overlay">
     <h1>365days⁺¹</h1>
-    <div class="sub">Salón de Arte</div>
     <button id="start-btn">EXPLORAR</button>
   </div>
 
@@ -152,51 +293,7 @@
     <svg class="nav-arrow-glyph" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
   </div>
 
-  <div id="fluid-cursor">
-    <svg id="cursor-arrow-icon" viewBox="0 0 24 24">
-      <polyline id="arrowPath" points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </div>
-
-  <div class="hud-layer" id="hudLayer">
-    <div class="hud-top">
-      <div class="brand-box">
-        <div class="brand-title">365days<sup>+1</sup></div>
-        <div class="brand-sub">PROJECT in 2024</div>
-      </div>
-      <div class="radar-widget">
-        <div class="radar-axis-h"></div>
-        <div class="radar-axis-v"></div>
-        <div class="radar-center-dot"></div>
-        <div class="radar-blip" id="radarDot"></div>
-        <span class="radar-label lbl-jan">N</span>
-        <span class="radar-label lbl-apr">E</span>
-        <span class="radar-label lbl-jul">S</span>
-        <span class="radar-label lbl-oct">W</span>
-      </div>
-    </div>
-    <div class="hud-bottom">
-      <div class="slide-counter">
-        <span id="slideIndexNum">1</span>
-        <span class="slash">/</span>
-        <span class="total">365</span>
-      </div>
-      <div class="meta-center-info">
-        <div class="meta-date">
-          <span id="datePrefix">1st day |</span>
-          <strong id="dateTitle">Jan 01</strong>
-        </div>
-        <div class="controls-hint">WASD CAMINAR • RATÓN MIRAR 360° • CLIC EN CUADRO</div>
-        <div class="copyright-line">© 2026 Masayuki Kamimae</div>
-      </div>
-      <div class="sound-bars">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-      </div>
-    </div>
-  </div>
+  <div id="fluid-cursor"></div>
 
   <div id="info-space">
     <div class="info-close-btn" id="btnCloseInfo" title="Volver (ESC)">
@@ -228,15 +325,14 @@
     // ---------- CONFIGURACIÓN ----------
     const TOTAL_DAYS = 365;
     const UNIQUE_IMAGES = 8;
-    const GALLERY_RADIUS = 18;   // radio de la sala
-    const FRAME_W = 1.5;
-    const FRAME_H = 2.0;
-    const FRAME_D = 0.07;
+    const GALLERY_RADIUS = 100;
+    const FRAME_W = 1.0;
+    const FRAME_H = 1.4;
+    const FRAME_D = 0.06;
 
     // ---------- CARGAR IMÁGENES ----------
     const textureCache = [];
     const imageSources = [];
-    let imagesLoaded = 0;
 
     function createPlaceholderTexture(imgNum) {
       const cv = document.createElement('canvas');
@@ -267,7 +363,6 @@
       function tryLoad() {
         if (attempt >= exts.length) {
           imageSources[imgNum] = '';
-          imagesLoaded++;
           return;
         }
         const filename = `imagen${imgNum}.${exts[attempt]}`;
@@ -278,7 +373,6 @@
           ctx.drawImage(img, 0, 0, cv.width, cv.height);
           tex.needsUpdate = true;
           imageSources[imgNum] = filename;
-          imagesLoaded++;
         };
         img.onerror = () => { attempt++; tryLoad(); };
         img.src = filename;
@@ -292,7 +386,7 @@
       imageSources[i] = '';
     }
 
-    // Drag & Drop
+    // Drag & Drop (mantenido para que puedas cambiar imágenes)
     window.addEventListener('dragover', e => e.preventDefault());
     window.addEventListener('drop', e => {
       e.preventDefault();
@@ -346,22 +440,6 @@
       return new THREE.CanvasTexture(cv);
     }
 
-    function createFloatingTextTexture(text) {
-      const cv = document.createElement('canvas');
-      cv.width = 512; cv.height = 128;
-      const ctx = cv.getContext('2d');
-      ctx.clearRect(0, 0, cv.width, cv.height);
-      ctx.font = '800 46px "Plus Jakarta Sans", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.shadowColor = 'rgba(255,255,255,0.95)';
-      ctx.shadowBlur = 18;
-      ctx.fillStyle = '#fff';
-      ctx.fillText(text, cv.width/2, cv.height/2);
-      return new THREE.CanvasTexture(cv);
-    }
-
-    // ---------- SUELO DE MADERA ----------
     function createWoodTexture() {
       const c = document.createElement('canvas');
       c.width = 1024; c.height = 1024;
@@ -383,7 +461,7 @@
       }
       const tex = new THREE.CanvasTexture(c);
       tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-      tex.repeat.set(6, 6);
+      tex.repeat.set(12, 12);
       tex.anisotropy = 16;
       return tex;
     }
@@ -396,139 +474,115 @@
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.0;
     if (THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
     else if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xd4cfc8);
-    scene.fog = new THREE.FogExp2(0xd4cfc8, 0.008);
+    scene.background = new THREE.Color(0x2a2a2a);
+    scene.fog = new THREE.FogExp2(0x2a2a2a, 0.0045);
 
-    const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 120);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 250);
 
-    // ---------- ILUMINACIÓN ----------
-    const ambLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // ---------- ILUMINACIÓN CINEMATOGRÁFICA ----------
+    const ambLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambLight);
 
-    // Luz principal desde arriba
-    const mainLight = new THREE.DirectionalLight(0xfff5e6, 1.0);
-    mainLight.position.set(0, 12, 5);
+    const mainLight = new THREE.DirectionalLight(0xffeedd, 1.5);
+    mainLight.position.set(10, 20, 15);
     mainLight.castShadow = true;
-    mainLight.shadow.mapSize.width = 2048;
-    mainLight.shadow.mapSize.height = 2048;
+    mainLight.shadow.mapSize.width = 4096;
+    mainLight.shadow.mapSize.height = 4096;
     mainLight.shadow.camera.near = 0.5;
-    mainLight.shadow.camera.far = 30;
-    mainLight.shadow.camera.left = -20;
-    mainLight.shadow.camera.right = 20;
-    mainLight.shadow.camera.top = 20;
-    mainLight.shadow.camera.bottom = -20;
+    mainLight.shadow.camera.far = 120;
+    mainLight.shadow.camera.left = -60;
+    mainLight.shadow.camera.right = 60;
+    mainLight.shadow.camera.top = 60;
+    mainLight.shadow.camera.bottom = -60;
     scene.add(mainLight);
 
-    const fillLight = new THREE.DirectionalLight(0xccddff, 0.3);
-    fillLight.position.set(-10, 5, -10);
+    const fillLight = new THREE.DirectionalLight(0x446688, 0.4);
+    fillLight.position.set(-15, 10, -20);
     scene.add(fillLight);
 
-    // Focos puntuales para dar calidez
-    const spotLight = new THREE.PointLight(0xffdd99, 0.6, 30);
-    spotLight.position.set(0, 6, 0);
-    scene.add(spotLight);
+    const rimLight = new THREE.DirectionalLight(0xffaa66, 0.6);
+    rimLight.position.set(-5, 5, 25);
+    scene.add(rimLight);
 
     // ---------- SUELO ----------
-    const floorGeo = new THREE.PlaneGeometry(50, 50);
-    const floorMat = new THREE.MeshStandardMaterial({ map: createWoodTexture(), roughness: 0.6, metalness: 0.05 });
+    const floorSize = GALLERY_RADIUS + 10;
+    const floorGeo = new THREE.PlaneGeometry(floorSize*2, floorSize*2);
+    const floorMat = new THREE.MeshStandardMaterial({ map: createWoodTexture(), roughness: 0.7, metalness: 0.05 });
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
     floorMesh.rotation.x = -Math.PI/2;
     floorMesh.receiveShadow = true;
     floorMesh.position.y = 0;
     scene.add(floorMesh);
 
-    // ---------- PARED CILÍNDRICA ----------
-    const wallHeight = 5.5;
-    const wallGeo = new THREE.CylinderGeometry(GALLERY_RADIUS, GALLERY_RADIUS, wallHeight, 64, 1, true);
-    const wallMat = new THREE.MeshStandardMaterial({ color: 0xe8e0d8, roughness: 0.9, side: THREE.DoubleSide });
+    // ---------- PARED ----------
+    const wallHeight = 6.0;
+    const wallGeo = new THREE.CylinderGeometry(GALLERY_RADIUS, GALLERY_RADIUS, wallHeight, 80, 1, true);
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a, roughness: 0.9, side: THREE.DoubleSide });
     const wallMesh = new THREE.Mesh(wallGeo, wallMat);
     wallMesh.position.y = wallHeight/2;
     wallMesh.receiveShadow = true;
     scene.add(wallMesh);
 
     // ---------- TECHO ----------
-    const ceilingGeo = new THREE.CircleGeometry(GALLERY_RADIUS, 64);
-    const ceilingMat = new THREE.MeshStandardMaterial({ color: 0xf0ece6, roughness: 0.8, side: THREE.BackSide });
+    const ceilingGeo = new THREE.CircleGeometry(GALLERY_RADIUS, 80);
+    const ceilingMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.9, side: THREE.BackSide });
     const ceilingMesh = new THREE.Mesh(ceilingGeo, ceilingMat);
     ceilingMesh.rotation.x = -Math.PI/2;
     ceilingMesh.position.y = wallHeight;
     scene.add(ceilingMesh);
 
-    // ---------- CONSTRUIR CUADROS ----------
+    // ---------- CUADROS (365) ----------
     const interactiveMeshes = [];
     const outerGeo = new THREE.BoxGeometry(FRAME_W, FRAME_H, FRAME_D);
-    const outerMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.4, metalness: 0.2 });
-    const matGeo = new THREE.PlaneGeometry(FRAME_W - 0.06, FRAME_H - 0.06);
+    const outerMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3, metalness: 0.3 });
+    const matGeo = new THREE.PlaneGeometry(FRAME_W - 0.05, FRAME_H - 0.05);
     const matMat = new THREE.MeshBasicMaterial({ color: 0xe8e0d8 });
-    const canvasGeo = new THREE.PlaneGeometry(FRAME_W - 0.16, FRAME_H - 0.16);
+    const canvasGeo = new THREE.PlaneGeometry(FRAME_W - 0.14, FRAME_H - 0.14);
     const dropShadowTex = createDropShadowTexture();
     const spotlightTex = createSpotlightTexture();
     const shadowGeo = new THREE.PlaneGeometry(FRAME_W * 1.6, FRAME_H * 1.6);
-    const shadowMat = new THREE.MeshBasicMaterial({ map: dropShadowTex, transparent: true, opacity: 0.5, depthWrite: false });
+    const shadowMat = new THREE.MeshBasicMaterial({ map: dropShadowTex, transparent: true, opacity: 0.4, depthWrite: false });
     const spotHaloGeo = new THREE.PlaneGeometry(FRAME_W * 1.4, FRAME_W * 1.4);
-    const spotHaloMat = new THREE.MeshBasicMaterial({ map: spotlightTex, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false });
+    const spotHaloMat = new THREE.MeshBasicMaterial({ map: spotlightTex, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending, depthWrite: false });
 
-    // Altura de los cuadros (centro a 1.6 m del suelo)
     const paintingY = 1.6;
 
     for (let i = 0; i < TOTAL_DAYS; i++) {
       const imgNum = (i % UNIQUE_IMAGES) + 1;
       const angle = (i / TOTAL_DAYS) * Math.PI * 2;
       const container = new THREE.Group();
-      const x = Math.sin(angle) * (GALLERY_RADIUS - 0.2);
-      const z = Math.cos(angle) * (GALLERY_RADIUS - 0.2);
+      const x = Math.sin(angle) * (GALLERY_RADIUS - 0.15);
+      const z = Math.cos(angle) * (GALLERY_RADIUS - 0.15);
       container.position.set(x, paintingY, z);
-      container.rotation.y = angle + Math.PI; // mirando hacia el centro
+      container.rotation.y = angle + Math.PI;
 
-      // Sombra en la pared
       const shadow = new THREE.Mesh(shadowGeo, shadowMat);
       shadow.position.set(0, 0, -0.02);
       container.add(shadow);
 
-      // Halo
       const halo = new THREE.Mesh(spotHaloGeo, spotHaloMat);
       halo.position.set(0, FRAME_H/2 + 0.15, -0.02);
       container.add(halo);
 
-      // Marco
       const frame = new THREE.Mesh(outerGeo, outerMat);
       frame.castShadow = true;
       container.add(frame);
 
-      // Passe-partout
       const pp = new THREE.Mesh(matGeo, matMat);
       pp.position.z = FRAME_D/2 + 0.001;
       container.add(pp);
 
-      // Lienzo
       const canvasMat = new THREE.MeshStandardMaterial({ map: textureCache[imgNum], roughness: 0.5, metalness: 0.05 });
       const canvasMesh = new THREE.Mesh(canvasGeo, canvasMat);
       canvasMesh.position.z = FRAME_D/2 + 0.004;
       canvasMesh.userData = { index: i, imgNum: imgNum };
       container.add(canvasMesh);
       interactiveMeshes.push(canvasMesh);
-
-      // Rótulos "The beginning" y "The end"
-      if (i === 0) {
-        const tex = createFloatingTextTexture("The beginning");
-        const g = new THREE.PlaneGeometry(2.0, 0.5);
-        const m = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false });
-        const mesh = new THREE.Mesh(g, m);
-        mesh.position.set(0, FRAME_H/2 + 0.5, 0.04);
-        container.add(mesh);
-      } else if (i === TOTAL_DAYS - 1) {
-        const tex = createFloatingTextTexture("The end");
-        const g = new THREE.PlaneGeometry(2.0, 0.5);
-        const m = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false });
-        const mesh = new THREE.Mesh(g, m);
-        mesh.position.set(0, FRAME_H/2 + 0.5, 0.04);
-        container.add(mesh);
-      }
 
       scene.add(container);
     }
@@ -541,15 +595,13 @@
     let startAnimationDone = false;
     const keys = { w: false, a: false, s: false, d: false };
 
-    // Posición final tras la animación: ver 5 cuadros (ángulo 0, distancia 8m)
-    const finalCamPos = new THREE.Vector3(0, 1.7, 8.5);
-    const finalLookAt = new THREE.Vector3(0, 1.6, 0);
+    // Posición final: frente al cuadro #1, a 2.5 m, con un ligero pitch para dramatismo
+    const finalCamPos = new THREE.Vector3(0, 1.7, GALLERY_RADIUS - 2.5);
+    const finalLookAt = new THREE.Vector3(0, 1.6, GALLERY_RADIUS);
 
-    // Al hacer clic en "EXPLORAR"
     document.getElementById('start-btn').addEventListener('click', () => {
       const overlay = document.getElementById('start-overlay');
       overlay.classList.add('hidden');
-      // Iniciar desde el centro mirando al frente (ángulo 0)
       camera.position.set(0, 1.6, 0);
       camera.lookAt(0, 1.6, 0);
       targetYaw = 0;
@@ -557,34 +609,32 @@
       player.yaw = 0;
       player.pitch = 0;
 
-      // Animación: moverse hacia atrás hasta finalCamPos
       gsap.to(camera.position, {
         x: finalCamPos.x,
         y: finalCamPos.y,
         z: finalCamPos.z,
-        duration: 2.5,
+        duration: 2.8,
         ease: "power3.inOut",
         onUpdate: () => {
           camera.lookAt(finalLookAt);
         },
         onComplete: () => {
           startAnimationDone = true;
-          // Sincronizar el jugador con la posición final
           player.pos.copy(finalCamPos);
           player.pos.y = 1.7;
+          player.yaw = Math.PI;
+          player.pitch = -0.08; // ligera inclinación hacia abajo
+          targetYaw = player.yaw;
+          targetPitch = player.pitch;
           camera.position.copy(player.pos);
           camera.rotation.set(0,0,0);
-          camera.rotation.y = 0;
-          camera.rotation.x = 0;
-          player.yaw = 0;
-          player.pitch = 0;
-          targetYaw = 0;
-          targetPitch = 0;
+          camera.rotation.y = player.yaw;
+          camera.rotation.x = player.pitch;
         }
       });
     });
 
-    // Controles de teclado
+    // Controles
     window.addEventListener('keydown', e => {
       const k = e.key.toLowerCase();
       if (k === 'w' || e.key === 'ArrowUp') keys.w = true;
@@ -601,7 +651,6 @@
       if (k === 'd' || e.key === 'ArrowRight') keys.d = false;
     });
 
-    // Ratón
     window.addEventListener('pointerdown', e => {
       if (inInfoSpace || e.target.closest('.nav-arrow-hitbox') || e.target.closest('#info-space')) return;
       isDragging = true;
@@ -618,7 +667,6 @@
     });
     window.addEventListener('pointerup', () => { isDragging = false; });
 
-    // Flechas
     document.getElementById('btnPrev').addEventListener('click', e => { e.stopPropagation(); if (startAnimationDone) targetYaw += Math.PI/4; });
     document.getElementById('btnNext').addEventListener('click', e => { e.stopPropagation(); if (startAnimationDone) targetYaw -= Math.PI/4; });
     window.addEventListener('wheel', e => { if (startAnimationDone && !inInfoSpace) targetYaw -= e.deltaY * 0.0012; }, { passive: true });
@@ -668,29 +716,17 @@
     document.getElementById('btnCloseInfo').addEventListener('click', closeInfoSpace);
     document.getElementById('btnReturn').addEventListener('click', closeInfoSpace);
 
-    // ---------- HUD ----------
-    function getOrdinal(n) { const s = ["th","st","nd","rd"]; const v = n%100; return s[(v-20)%10] || s[v] || s[0]; }
+    // ---------- HUD (oculto) ----------
     function get2024DateString(dayIndex) { const d = new Date(2024,0,1); d.setDate(d.getDate()+dayIndex); return `${d.getDate()} de ${d.toLocaleString('es-ES',{month:'short'})}`; }
-    function updateHUD() {
-      let normYaw = (-player.yaw % (Math.PI*2) + Math.PI*2) % (Math.PI*2);
-      let facingIdx = Math.round((normYaw / (Math.PI*2)) * TOTAL_DAYS) % TOTAL_DAYS;
-      const dayNum = facingIdx + 1;
-      document.getElementById('slideIndexNum').textContent = dayNum;
-      document.getElementById('datePrefix').textContent = `${dayNum}${getOrdinal(dayNum)} day |`;
-      document.getElementById('dateTitle').textContent = get2024DateString(facingIdx);
-      const rx = Math.sin(player.yaw) * 25, ry = -Math.cos(player.yaw) * 25;
-      document.getElementById('radarDot').style.transform = `translate(${rx}px, ${ry}px)`;
-    }
 
     // ---------- CURSOR ----------
     const cursor = document.getElementById('fluid-cursor');
-    const arrowPath = document.getElementById('arrowPath');
     let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
     let cursorX = mouseX, cursorY = mouseY;
     const btnPrev = document.getElementById('btnPrev'), btnNext = document.getElementById('btnNext');
-    btnPrev.addEventListener('mouseenter', () => { cursor.classList.add('bubble-mode'); arrowPath.setAttribute('points', '15 18 9 12 15 6'); });
+    btnPrev.addEventListener('mouseenter', () => cursor.classList.add('bubble-mode'));
     btnPrev.addEventListener('mouseleave', () => cursor.classList.remove('bubble-mode'));
-    btnNext.addEventListener('mouseenter', () => { cursor.classList.add('bubble-mode'); arrowPath.setAttribute('points', '9 18 15 12 9 6'); });
+    btnNext.addEventListener('mouseenter', () => cursor.classList.add('bubble-mode'));
     btnNext.addEventListener('mouseleave', () => cursor.classList.remove('bubble-mode'));
 
     // ---------- LOOP PRINCIPAL ----------
@@ -716,7 +752,7 @@
         if (moveDir.lengthSq() > 0) {
           moveDir.normalize();
           moveDir.applyAxisAngle(new THREE.Vector3(0,1,0), player.yaw);
-          const speed = 5.0;
+          const speed = 6.0;
           player.vel.x += moveDir.x * speed * dt * 8.0;
           player.vel.z += moveDir.z * speed * dt * 8.0;
           player.walkTime += dt * 9.0;
@@ -729,8 +765,7 @@
         player.pos.x += player.vel.x * dt;
         player.pos.z += player.vel.z * dt;
 
-        // Límite dentro de la sala (radio - 1m)
-        const maxDist = GALLERY_RADIUS - 1.5;
+        const maxDist = GALLERY_RADIUS - 2.0;
         const dist = Math.sqrt(player.pos.x*player.pos.x + player.pos.z*player.pos.z);
         if (dist > maxDist) { player.pos.x = (player.pos.x/dist)*maxDist; player.pos.z = (player.pos.z/dist)*maxDist; }
 
@@ -740,7 +775,6 @@
         camera.rotation.x = player.pitch;
       }
 
-      updateHUD();
       renderer.render(scene, camera);
     }
     animate();
@@ -751,7 +785,6 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // Si no se ha iniciado la animación, la cámara mira al centro
     if (!startAnimationDone) {
       camera.position.set(0, 1.6, 0);
       camera.lookAt(0, 1.6, 0);
