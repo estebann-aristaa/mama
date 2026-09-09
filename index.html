@@ -3,140 +3,258 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>365days+1 — Salón de Arte</title>
+  <title>La bata blanca digital — Yenny Peña</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Three.js -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; cursor: none !important; }
-    html, body { width: 100vw; height: 100vh; overflow: hidden; background: #1a1a1a; font-family: "Plus Jakarta Sans", sans-serif; color: #fff; }
-    #webgl-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 1; display: block; }
-    
-    /* Grano de película */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: none !important;
+    }
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #6e747e;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      color: #ffffff;
+    }
+    #webgl-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      display: block;
+    }
+
     .film-grain {
       position: fixed;
       inset: 0;
       z-index: 4;
       pointer-events: none;
-      opacity: 0.035;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     }
 
-    /* Viñeta */
     .vignette {
       position: fixed;
       inset: 0;
       z-index: 3;
       pointer-events: none;
-      background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+      background: radial-gradient(ellipse at center, transparent 45%, rgba(20, 22, 26, 0.4) 100%);
     }
 
-    /* Overlay de inicio */
-    #start-overlay {
+    .nav-arrow-hitbox {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 70px;
+      height: 140px;
+      z-index: 25;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+      transition: opacity 0.3s ease;
+    }
+    .arrow-left-box { left: 4.5vw; }
+    .arrow-right-box { right: 4.5vw; }
+    .nav-arrow-glyph {
+      width: 44px;
+      height: 44px;
+      stroke: rgba(255, 255, 255, 0.7);
+      stroke-width: 1.4;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform 0.3s ease, stroke 0.3s ease;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+    }
+    .nav-arrow-hitbox:hover .nav-arrow-glyph {
+      stroke: #ffffff;
+      transform: scale(1.15);
+    }
+    body.in-info-space .nav-arrow-hitbox {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ===== PANTALLA DE INTRODUCCIÓN (lo único agregado antes de la sala) ===== */
+    #intro-overlay {
       position: fixed;
       inset: 0;
-      z-index: 100;
-      background: rgba(10, 10, 10, 0.9);
-      backdrop-filter: blur(8px);
+      z-index: 110;
+      background: radial-gradient(circle at center, rgba(110, 116, 126, 0.97) 0%, rgba(30, 32, 37, 0.99) 100%);
+      backdrop-filter: blur(14px);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: opacity 1.5s ease;
-      pointer-events: auto;
+      text-align: center;
+      padding: 2rem;
+      transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    #start-overlay.hidden { opacity: 0; pointer-events: none; }
-    #start-overlay h1 {
-      font-size: clamp(3.5rem, 10vw, 7rem);
+    #intro-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .intro-eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 1.2rem;
+    }
+    .intro-title {
+      font-size: clamp(2.2rem, 6vw, 4.2rem);
       font-weight: 800;
-      letter-spacing: -0.04em;
-      background: linear-gradient(135deg, #f0ece6 0%, #a09888 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 80px rgba(255,255,255,0.08);
-      margin-bottom: 2rem;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      max-width: 900px;
+      margin-bottom: 1rem;
     }
-    #start-btn {
-      padding: 1.2rem 3.5rem;
-      border: 1.5px solid rgba(255,255,255,0.25);
-      border-radius: 60px;
-      background: rgba(255,255,255,0.05);
-      color: #fff;
-      font-size: 1.2rem;
+    .intro-subtitle {
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      font-weight: 400;
+      color: rgba(255,255,255,0.75);
+      max-width: 620px;
+      line-height: 1.55;
+      margin-bottom: 2.2rem;
+    }
+    .intro-author {
+      font-size: 1.05rem;
       font-weight: 600;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+      margin-bottom: 0.35rem;
+    }
+    .intro-course {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 2.8rem;
+    }
+    #intro-btn {
+      padding: 1.1rem 3.5rem;
+      border: 1.5px solid rgba(255, 255, 255, 0.5);
+      border-radius: 60px;
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
       cursor: pointer !important;
-      transition: all 0.4s ease;
-      backdrop-filter: blur(4px);
+      transition: all 0.35s ease;
+      backdrop-filter: blur(8px);
       font-family: "Plus Jakarta Sans", sans-serif;
       text-transform: uppercase;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
     }
-    #start-btn:hover { background: #fff; color: #111; transform: scale(1.05); border-color: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    #intro-btn:hover {
+      background: #ffffff;
+      color: #1a1a1a;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.35);
+    }
 
-    /* Cursor personalizado (solo visible, sin texto) */
+    #start-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: radial-gradient(circle at center, rgba(110, 116, 126, 0.95) 0%, rgba(45, 48, 54, 0.98) 100%);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #start-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #start-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #start-btn {
+      padding: 1.1rem 3.5rem;
+      border: 1.5px solid rgba(255, 255, 255, 0.5);
+      border-radius: 60px;
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      cursor: pointer !important;
+      transition: all 0.35s ease;
+      backdrop-filter: blur(8px);
+      font-family: "Plus Jakarta Sans", sans-serif;
+      text-transform: uppercase;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+    #start-btn:hover {
+      background: #ffffff;
+      color: #1a1a1a;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.35);
+    }
+
     #fluid-cursor {
       position: fixed;
       top: 0;
       left: 0;
       width: 8px;
       height: 8px;
-      background: #fff;
+      background: #ffffff;
       border-radius: 50%;
       pointer-events: none;
       z-index: 9999;
       transform: translate(-50%, -50%);
-      box-shadow: 0 0 12px rgba(255,255,255,0.7);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
       transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
     }
     #fluid-cursor.bubble-mode {
-      width: 50px;
-      height: 50px;
-      background: rgba(255,255,255,0.1);
-      box-shadow: 0 0 30px rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.3);
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.4);
     }
-    body.in-info-space #fluid-cursor { background: #111; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
-
-    /* Flechas laterales (solo iconos, sin texto) */
-    .nav-arrow-hitbox {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 80px;
-      height: 160px;
-      z-index: 25;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .arrow-left-box { left: 2vw; }
-    .arrow-right-box { right: 2vw; }
-    .nav-arrow-glyph {
-      width: 36px;
-      height: 36px;
-      stroke: rgba(255,255,255,0.4);
-      stroke-width: 1.5;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-    .nav-arrow-hitbox:hover .nav-arrow-glyph {
-      opacity: 0.8;
-      transform: scale(1.2);
+    body.in-info-space #fluid-cursor {
+      background: #111;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
     }
 
-    /* Panel de información (se mantiene) */
     #info-space {
       position: fixed;
       inset: 0;
       z-index: 50;
-      background: #f7f6f2;
+      background: #f5f5f3;
       color: #1a1a1a;
       display: flex;
       align-items: center;
@@ -144,26 +262,29 @@
       padding: clamp(2rem, 5vw, 5rem);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    #info-space.active { opacity: 1; pointer-events: auto; }
+    #info-space.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
     .info-container {
       width: 100%;
-      max-width: 1200px;
+      max-width: 1050px;
       display: grid;
       grid-template-columns: 1fr 1.15fr;
-      gap: clamp(2rem, 5vw, 5rem);
+      gap: clamp(2rem, 5vw, 4.5rem);
       align-items: center;
     }
     .info-artwork-box {
       width: 100%;
-      max-width: 440px;
+      max-width: 420px;
       justify-self: center;
       aspect-ratio: 3/4.2;
       background: #0d0d0d;
-      padding: 12px;
+      padding: 10px;
       border-radius: 4px;
-      box-shadow: 0 30px 70px rgba(0,0,0,0.25);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
     }
     .info-artwork-img {
       width: 100%;
@@ -175,24 +296,23 @@
     .info-details {
       display: flex;
       flex-direction: column;
-      gap: 1.2rem;
+      gap: 1.1rem;
     }
     .info-badge {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      font-family: "JetBrains Mono", monospace;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #888;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #777;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
     }
     .info-badge::before {
       content: '';
-      width: 8px;
-      height: 8px;
-      background: #b93a2b;
+      width: 7px;
+      height: 7px;
+      background: #d43b2c;
       border-radius: 50%;
     }
     .info-title {
@@ -203,26 +323,23 @@
       color: #111;
     }
     .info-date-tag {
-      font-family: "JetBrains Mono", monospace;
       font-size: 1rem;
       color: #666;
-      font-weight: 500;
+      font-weight: 600;
     }
     .info-desc {
-      font-size: clamp(0.95rem, 1.15vw, 1.08rem);
-      line-height: 1.65;
+      font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+      line-height: 1.6;
       color: #444;
       font-weight: 400;
-      max-width: 520px;
-      margin-top: 0.5rem;
+      max-width: 500px;
     }
     .info-specs-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
-      border-top: 1px solid rgba(0,0,0,0.1);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
       padding-top: 1.2rem;
-      margin-top: 0.5rem;
     }
     .spec-item {
       display: flex;
@@ -230,10 +347,11 @@
       gap: 0.2rem;
     }
     .spec-label {
-      font-size: 0.72rem;
-      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
       color: #888;
       text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
     .spec-val {
       font-size: 0.92rem;
@@ -244,19 +362,22 @@
       display: inline-flex;
       align-items: center;
       gap: 0.6rem;
-      margin-top: 1rem;
-      background: #1a1a1a;
+      margin-top: 0.8rem;
+      background: #111;
       color: #fff;
       padding: 0.9rem 1.8rem;
       border-radius: 50px;
       font-size: 0.9rem;
       font-weight: 600;
-      letter-spacing: -0.01em;
       transition: transform 0.25s ease, background 0.25s ease;
       align-self: flex-start;
+      border: none;
       cursor: pointer !important;
     }
-    .btn-return-gallery:hover { background: #000; transform: translateY(-2px); }
+    .btn-return-gallery:hover {
+      background: #000;
+      transform: translateY(-2px);
+    }
     .info-close-btn {
       position: absolute;
       top: 2.5rem;
@@ -264,33 +385,77 @@
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      border: 1px solid rgba(0,0,0,0.15);
+      border: 1px solid rgba(0, 0, 0, 0.15);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer !important;
       transition: transform 0.3s ease, background 0.3s ease;
     }
-    .info-close-btn:hover { transform: rotate(90deg) scale(1.1); background: rgba(0,0,0,0.06); }
-    .info-close-btn svg { width: 20px; height: 20px; stroke: #1a1a1a; stroke-width: 2; }
+    .info-close-btn:hover {
+      transform: rotate(90deg) scale(1.08);
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .info-close-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: #1a1a1a;
+      stroke-width: 2;
+    }
+
+    /* Botones de navegación dentro del modal */
+    .info-nav {
+      display: flex;
+      gap: 1.2rem;
+      margin-top: 0.5rem;
+      align-self: flex-start;
+    }
+    .info-nav-btn {
+      background: none;
+      border: 1.5px solid #aaa;
+      border-radius: 30px;
+      padding: 0.5rem 1.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer !important;
+      transition: all 0.25s ease;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      letter-spacing: 0.03em;
+    }
+    .info-nav-btn:hover {
+      background: #111;
+      border-color: #111;
+      color: #fff;
+      transform: scale(1.02);
+    }
   </style>
 </head>
+
 <body>
 
   <canvas id="webgl-canvas"></canvas>
   <div class="film-grain"></div>
   <div class="vignette"></div>
 
+  <div id="intro-overlay">
+    <div class="intro-eyebrow">Ponencia individual · Psicología Social II</div>
+    <h1 class="intro-title">La bata blanca digital</h1>
+    <p class="intro-subtitle">Conformidad y obediencia en psicología social: de los experimentos de Asch y Milgram al consenso fabricado por los algoritmos de hoy.</p>
+    <div class="intro-author">Yenny Peña</div>
+    <div class="intro-course">Basado en Levine &amp; Pavelchak y Doms &amp; Moscovici — <em>Psicología social</em> (S. Moscovici, comp.)</div>
+    <button id="intro-btn">Comenzar</button>
+  </div>
+
   <div id="start-overlay">
-    <h1>365days⁺¹</h1>
     <button id="start-btn">EXPLORAR</button>
   </div>
 
   <div class="nav-arrow-hitbox arrow-left-box" id="btnPrev">
-    <svg class="nav-arrow-glyph" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    <svg class="nav-arrow-glyph" viewBox="0 0 24 24"><polyline points="15 19 8 12 15 5"></polyline></svg>
   </div>
   <div class="nav-arrow-hitbox arrow-right-box" id="btnNext">
-    <svg class="nav-arrow-glyph" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    <svg class="nav-arrow-glyph" viewBox="0 0 24 24"><polyline points="9 19 16 12 9 5"></polyline></svg>
   </div>
 
   <div id="fluid-cursor"></div>
@@ -301,65 +466,313 @@
     </div>
     <div class="info-container">
       <div class="info-artwork-box">
-        <img class="info-artwork-img" id="infoImg" src="" alt="Obra">
+        <img class="info-artwork-img" id="infoImg" src="" alt="Obra" />
       </div>
       <div class="info-details">
-        <div class="info-badge">Sala de Exposición</div>
-        <h1 class="info-title" id="infoTitle">Obra #1 — Serie 365days</h1>
-        <div class="info-date-tag" id="infoDate">Día 1 / 365 — 01 de Enero, 2024</div>
-        <p class="info-desc" id="infoDesc">
-          Cada día una obra. Esta es la esencia de 365days: capturar el paso del tiempo a través de la imagen.
-        </p>
+        <div class="info-badge">Ponencia: La bata blanca digital</div>
+        <h1 class="info-title" id="infoTitle">Día 1 — Conformidad (Asch)</h1>
+        <div class="info-date-tag" id="infoDate">1 de enero de 2024</div>
+        <p class="info-desc" id="infoDesc">Descripción del tema.</p>
         <div class="info-specs-grid">
-          <div class="spec-item"><span class="spec-label">Técnica</span><span class="spec-val">Pintura Digital</span></div>
-          <div class="spec-item"><span class="spec-label">Dimensiones</span><span class="spec-val">1024 × 1440 px</span></div>
-          <div class="spec-item"><span class="spec-label">Colección</span><span class="spec-val">365days+1</span></div>
-          <div class="spec-item"><span class="spec-label">Artista</span><span class="spec-val">Masayuki Kamimae</span></div>
+          <div class="spec-item"><span class="spec-label">Experimento</span><span class="spec-val" id="infoTechnique">—</span></div>
+          <div class="spec-item"><span class="spec-label">Autor</span><span class="spec-val" id="infoDimensions">—</span></div>
+          <div class="spec-item"><span class="spec-label">Contexto</span><span class="spec-val" id="infoCollection">—</span></div>
+          <div class="spec-item"><span class="spec-label">Concepto</span><span class="spec-val" id="infoArtist">—</span></div>
+        </div>
+        <!-- Botones de navegación entre cuadros -->
+        <div class="info-nav">
+          <button class="info-nav-btn" id="infoPrevBtn">◀ Anterior</button>
+          <button class="info-nav-btn" id="infoNextBtn">Siguiente ▶</button>
         </div>
         <button class="btn-return-gallery" id="btnReturn"><span>← Volver a la Sala</span></button>
       </div>
     </div>
   </div>
 
-  <script>
-    // ---------- CONFIGURACIÓN ----------
-    const TOTAL_DAYS = 365;
+  <!-- ===== SCRIPT 3D ===== -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+    // ---------- CONFIGURACIÓN (idéntica al archivo original) ----------
+    const TOTAL_DAYS = 366;
     const UNIQUE_IMAGES = 8;
     const GALLERY_RADIUS = 100;
-    const FRAME_W = 1.0;
-    const FRAME_H = 1.4;
+    const FRAME_W = 1.25;
+    const FRAME_H = 1.72;
     const FRAME_D = 0.06;
+    const WALL_HEIGHT = 7.0;
+    const PAINTING_Y = 1.50;
+    const CAMERA_Y = 1.50;
+    const CAM_DIST = 3.25;
 
-    // ---------- CARGAR IMÁGENES ----------
+    // ---------- CONTENIDO DE LA PONENCIA (8 TEMAS QUE SE REPITEN EN EL CICLO DE 366) ----------
+    const THEMES = [
+      {
+        title: 'Conformidad (Asch)',
+        desc: 'Solomon Asch demostró que la presión de un grupo puede hacer que una persona ignore la evidencia de sus propios sentidos. En su experimento, el 75% de los sujetos cedió al menos una vez ante una mayoría que daba respuestas incorrectas.',
+        experiment: 'Asch (1951, 1955, 1956)',
+        author: 'Solomon Asch',
+        context: 'Percepción visual / Juicio de líneas',
+        concept: 'Conformidad — sumisión pública'
+      },
+      {
+        title: 'Resultados de Asch',
+        desc: 'En solitario los errores eran menores al 5%, pero con presión de grupo la conformidad subió al 33%. Bastaba un solo aliado que rompiera la unanimidad para que la conformidad cayera drásticamente.',
+        experiment: 'Asch (1951)',
+        author: 'Solomon Asch',
+        context: 'Laboratorio de psicología social',
+        concept: 'Unanimidad y aliado social'
+      },
+      {
+        title: 'Obediencia (Milgram)',
+        desc: 'Stanley Milgram investigó hasta dónde obedece una persona a una autoridad. El 65% de los sujetos aplicó descargas de 450 voltios a una víctima inocente porque un experimentador con bata blanca se lo ordenaba.',
+        experiment: 'Milgram (1963, 1974)',
+        author: 'Stanley Milgram',
+        context: 'Castigo y aprendizaje',
+        concept: 'Obediencia a la autoridad'
+      },
+      {
+        title: 'Resultados de Milgram',
+        desc: 'La obediencia cayó del 65% (víctima en otra habitación) al 30% cuando el sujeto debía forzar físicamente la mano de la víctima. Cuando dos compañeros se rebelaban, solo el 10% siguió obedeciendo.',
+        experiment: 'Milgram (1974)',
+        author: 'Stanley Milgram',
+        context: 'Proximidad de la víctima y grupo',
+        concept: 'Factores situacionales'
+      },
+      {
+        title: 'Interpretación de Milgram',
+        desc: 'Milgram propuso el concepto de "estado de agente": la persona deja de sentirse responsable de sus actos y transfiere esa responsabilidad a la autoridad. La obediencia destructiva no es cuestión de personalidad, sino de estructura social.',
+        experiment: 'Milgram (1974)',
+        author: 'Stanley Milgram',
+        context: 'Autonomía vs. estado de agente',
+        concept: 'Responsabilidad delegada'
+      },
+      {
+        title: 'Conformidad vs. Obediencia',
+        desc: 'La conformidad viene de pares (mismo estatus); la obediencia, de una autoridad (estatus superior). El conformista se parece al grupo; el obediente hace lo que nunca habría elegido por sí mismo.',
+        experiment: 'Levine & Pavelchak',
+        author: 'Levine y Pavelchak',
+        context: 'Psicología social clásica',
+        concept: 'Distinción conceptual'
+      },
+      {
+        title: 'El algoritmo como autoridad',
+        desc: 'La bata blanca de Milgram ya no está en Yale: vive en los algoritmos que nos dicen qué opinión es correcta, qué video merece la pena y qué consenso es "verdadero". El algoritmo es autoridad a distancia máxima, y aun así influye.',
+        experiment: 'Aplicación contemporánea (aporte propio)',
+        author: 'Yenny Peña',
+        context: 'Redes sociales y consenso digital',
+        concept: 'Ciber-obediencia'
+      },
+      {
+        title: 'Moscovici y la minoría activa',
+        desc: 'Serge Moscovici plantea que la conformidad no es la única salida. La innovación —movimiento del grupo hacia una minoría consistente— es posible. Tarde: "el error es no creer en la inverosimilitud".',
+        experiment: 'Doms & Moscovici (1976)',
+        author: 'Serge Moscovici / Gabriel Tarde',
+        context: 'Influencia de minorías',
+        concept: 'Innovación y disidencia'
+      }
+    ];
+
+    // ---------- TEXTURAS Y GENERACIÓN DE OBRAS ----------
+    function createDropShadowTexture() {
+      const cv = document.createElement('canvas');
+      cv.width = 512;
+      cv.height = 512;
+      const ctx = cv.getContext('2d');
+      const grad = ctx.createRadialGradient(256, 280, 20, 256, 280, 230);
+      grad.addColorStop(0, 'rgba(0, 0, 0, 0.95)');
+      grad.addColorStop(0.4, 'rgba(0, 0, 0, 0.6)');
+      grad.addColorStop(0.7, 'rgba(0, 0, 0, 0.15)');
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 512);
+      return new THREE.CanvasTexture(cv);
+    }
+
+    function createSpotlightTexture() {
+      const cv = document.createElement('canvas');
+      cv.width = 512;
+      cv.height = 512;
+      const ctx = cv.getContext('2d');
+      const grad = ctx.createRadialGradient(256, 180, 10, 256, 220, 230);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+      grad.addColorStop(0.25, 'rgba(255, 255, 255, 0.4)');
+      grad.addColorStop(0.65, 'rgba(255, 255, 255, 0.05)');
+      grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 512);
+      return new THREE.CanvasTexture(cv);
+    }
+
+    function createStudioFloorTexture() {
+      const cv = document.createElement('canvas');
+      cv.width = 1024;
+      cv.height = 1024;
+      const ctx = cv.getContext('2d');
+      ctx.fillStyle = '#7a808a';
+      ctx.fillRect(0, 0, 1024, 1024);
+      for (let i = 0; i < 400; i++) {
+        const x = Math.random() * 1024;
+        const y = Math.random() * 1024;
+        const r = 20 + Math.random() * 60;
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+        grad.addColorStop(0, `rgba(255,255,255,${0.02 + Math.random() * 0.02})`);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(x - r, y - r, r * 2, r * 2);
+      }
+      const texture = new THREE.CanvasTexture(cv);
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(10, 10);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      return texture;
+    }
+
+    function createStudioWallTexture() {
+      const cv = document.createElement('canvas');
+      cv.width = 1024;
+      cv.height = 1024;
+      const ctx = cv.getContext('2d');
+      ctx.fillStyle = '#6e747e';
+      ctx.fillRect(0, 0, 1024, 1024);
+      for (let i = 0; i < 300; i++) {
+        const x = Math.random() * 1024;
+        const y = Math.random() * 1024;
+        const s = 10 + Math.random() * 30;
+        ctx.fillStyle = `rgba(255,255,255,${0.015 + Math.random() * 0.02})`;
+        ctx.fillRect(x, y, s, s);
+      }
+      const texture = new THREE.CanvasTexture(cv);
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(16, 2);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      return texture;
+    }
+
     const textureCache = [];
     const imageSources = [];
 
-    function createPlaceholderTexture(imgNum) {
+    function createArtArtworkTexture(index) {
       const cv = document.createElement('canvas');
-      cv.width = 1024; cv.height = 1440;
+      cv.width = 600;
+      cv.height = 840;
       const ctx = cv.getContext('2d');
-      ctx.fillStyle = '#2a2a2a';
-      ctx.fillRect(0, 0, cv.width, cv.height);
-      ctx.fillStyle = '#888';
-      ctx.font = 'bold 180px "Plus Jakarta Sans", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(String(imgNum).padStart(2, '0'), cv.width/2, cv.height/2);
+
+      ctx.fillStyle = '#eae5db';
+      ctx.fillRect(0, 0, 600, 840);
+
+      ctx.fillStyle = '#0f0f0f';
+      ctx.strokeStyle = '#0f0f0f';
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      const imgNum = ((index - 1) % UNIQUE_IMAGES) + 1; // 1..8
+
+      if (imgNum === 1) {
+        ctx.lineWidth = 45;
+        ctx.beginPath();
+        ctx.arc(300, 420, 195, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.lineWidth = 30;
+        ctx.beginPath();
+        ctx.arc(300, 420, 115, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(300, 420, 38, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#cba338';
+        ctx.lineWidth = 28;
+        ctx.beginPath();
+        ctx.moveTo(300, 130);
+        ctx.lineTo(325, 410);
+        ctx.lineTo(260, 680);
+        ctx.stroke();
+      } else if (imgNum === 2) {
+        ctx.lineWidth = 60;
+        ctx.beginPath();
+        ctx.moveTo(170, 150);
+        ctx.bezierCurveTo(460, 240, 110, 510, 430, 690);
+        ctx.stroke();
+        ctx.lineWidth = 26;
+        ctx.beginPath();
+        ctx.moveTo(430, 170);
+        ctx.lineTo(230, 650);
+        ctx.stroke();
+      } else if (imgNum === 3) {
+        ctx.lineWidth = 46;
+        ctx.beginPath();
+        ctx.moveTo(180, 110);
+        ctx.bezierCurveTo(140, 340, 230, 490, 190, 730);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(350, 110);
+        ctx.bezierCurveTo(400, 290, 320, 540, 370, 730);
+        ctx.stroke();
+      } else if (imgNum === 4) {
+        ctx.lineWidth = 55;
+        ctx.beginPath();
+        ctx.moveTo(150, 150);
+        ctx.lineTo(450, 690);
+        ctx.moveTo(450, 150);
+        ctx.lineTo(150, 690);
+        ctx.moveTo(300, 110);
+        ctx.lineTo(300, 730);
+        ctx.stroke();
+      } else if (imgNum === 5) {
+        ctx.lineWidth = 58;
+        ctx.beginPath();
+        ctx.moveTo(190, 150);
+        ctx.lineTo(190, 510);
+        ctx.arcTo(190, 690, 410, 690, 110);
+        ctx.lineTo(410, 150);
+        ctx.stroke();
+      } else if (imgNum === 6) {
+        ctx.lineWidth = 42;
+        ctx.beginPath();
+        ctx.arc(300, 290, 105, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(300, 550, 125, 0, Math.PI * 2);
+        ctx.stroke();
+      } else if (imgNum === 7) {
+        ctx.lineWidth = 65;
+        ctx.beginPath();
+        ctx.arc(300, 420, 180, 0.2, Math.PI * 1.95);
+        ctx.stroke();
+      } else {
+        ctx.lineWidth = 48;
+        ctx.beginPath();
+        ctx.moveTo(300, 110);
+        ctx.bezierCurveTo(110, 290, 490, 530, 300, 730);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#d4af37';
+      for (let s = 0; s < 40; s++) {
+        const sx = 90 + Math.random() * 420;
+        const sy = 110 + Math.random() * 620;
+        const sr = 1.5 + Math.random() * 4.5;
+        ctx.beginPath();
+        ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
       const tex = new THREE.CanvasTexture(cv);
-      tex.anisotropy = 16;
-      tex.minFilter = THREE.LinearMipmapLinearFilter;
-      tex.magFilter = THREE.LinearFilter;
-      tex.generateMipmaps = true;
-      if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
-      else if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
+      tex.anisotropy = 8;
+      tex.colorSpace = THREE.SRGBColorSpace;
       return tex;
     }
 
     function loadArtworkTexture(imgNum) {
-      const tex = createPlaceholderTexture(imgNum);
+      const tex = createArtArtworkTexture(imgNum);
       const cv = tex.image;
       const exts = ['png', 'jpg', 'jpeg', 'webp'];
       let attempt = 0;
+
       function tryLoad() {
         if (attempt >= exts.length) {
           imageSources[imgNum] = '';
@@ -374,7 +787,10 @@
           tex.needsUpdate = true;
           imageSources[imgNum] = filename;
         };
-        img.onerror = () => { attempt++; tryLoad(); };
+        img.onerror = () => {
+          attempt++;
+          tryLoad();
+        };
         img.src = filename;
       }
       tryLoad();
@@ -386,7 +802,6 @@
       imageSources[i] = '';
     }
 
-    // Drag & Drop (mantenido para que puedas cambiar imágenes)
     window.addEventListener('dragover', e => e.preventDefault());
     window.addEventListener('drop', e => {
       e.preventDefault();
@@ -411,175 +826,154 @@
       });
     });
 
-    // ---------- TEXTURAS AUXILIARES ----------
-    function createDropShadowTexture() {
-      const cv = document.createElement('canvas');
-      cv.width = 512; cv.height = 512;
-      const ctx = cv.getContext('2d');
-      const grad = ctx.createRadialGradient(256, 256, 30, 256, 256, 250);
-      grad.addColorStop(0, 'rgba(0,0,0,0.65)');
-      grad.addColorStop(0.4, 'rgba(0,0,0,0.25)');
-      grad.addColorStop(0.7, 'rgba(0,0,0,0.05)');
-      grad.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 512, 512);
-      return new THREE.CanvasTexture(cv);
-    }
-
-    function createSpotlightTexture() {
-      const cv = document.createElement('canvas');
-      cv.width = 512; cv.height = 512;
-      const ctx = cv.getContext('2d');
-      const grad = ctx.createRadialGradient(256, 256, 5, 256, 256, 240);
-      grad.addColorStop(0, 'rgba(255,255,255,0.55)');
-      grad.addColorStop(0.3, 'rgba(255,255,255,0.2)');
-      grad.addColorStop(0.65, 'rgba(255,255,255,0.03)');
-      grad.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 512, 512);
-      return new THREE.CanvasTexture(cv);
-    }
-
-    function createWoodTexture() {
-      const c = document.createElement('canvas');
-      c.width = 1024; c.height = 1024;
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = '#b8a28c';
-      ctx.fillRect(0, 0, c.width, c.height);
-      for (let i=0; i<200; i++) {
-        const x = Math.random()*c.width, y = Math.random()*c.height;
-        ctx.strokeStyle = `rgba(80,60,40,${0.15+Math.random()*0.3})`;
-        ctx.lineWidth = 2+Math.random()*8;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.bezierCurveTo(
-          x+(Math.random()-0.5)*120, y+(Math.random()-0.5)*120,
-          x+(Math.random()-0.5)*120, y+(Math.random()-0.5)*120,
-          x+(Math.random()-0.5)*250, y+(Math.random()-0.5)*250
-        );
-        ctx.stroke();
-      }
-      const tex = new THREE.CanvasTexture(c);
-      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-      tex.repeat.set(12, 12);
-      tex.anisotropy = 16;
-      return tex;
-    }
-
-    // ---------- ESCENA THREE.JS ----------
+    // ---------- RENDERER Y ESCENA ----------
     const canvas = document.getElementById('webgl-canvas');
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      powerPreference: "high-performance"
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
-    if (THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
-    else if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x2a2a2a);
-    scene.fog = new THREE.FogExp2(0x2a2a2a, 0.0045);
+    const studioColor = new THREE.Color(0x6e747e);
+    scene.background = studioColor;
+    scene.fog = new THREE.Fog(0x6e747e, 14, 65);
 
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 250);
+    const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 200);
 
-    // ---------- ILUMINACIÓN CINEMATOGRÁFICA ----------
-    const ambLight = new THREE.AmbientLight(0xffffff, 0.3);
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    const envTexture = pmremGenerator.fromScene(new RoomEnvironment()).texture;
+    scene.environment = envTexture;
+    pmremGenerator.dispose();
+
+    const ambLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    dirLight.position.set(0, 20, 0);
+    scene.add(dirLight);
 
-    const mainLight = new THREE.DirectionalLight(0xffeedd, 1.5);
-    mainLight.position.set(10, 20, 15);
-    mainLight.castShadow = true;
-    mainLight.shadow.mapSize.width = 4096;
-    mainLight.shadow.mapSize.height = 4096;
-    mainLight.shadow.camera.near = 0.5;
-    mainLight.shadow.camera.far = 120;
-    mainLight.shadow.camera.left = -60;
-    mainLight.shadow.camera.right = 60;
-    mainLight.shadow.camera.top = 60;
-    mainLight.shadow.camera.bottom = -60;
-    scene.add(mainLight);
-
-    const fillLight = new THREE.DirectionalLight(0x446688, 0.4);
-    fillLight.position.set(-15, 10, -20);
-    scene.add(fillLight);
-
-    const rimLight = new THREE.DirectionalLight(0xffaa66, 0.6);
-    rimLight.position.set(-5, 5, 25);
-    scene.add(rimLight);
-
-    // ---------- SUELO ----------
-    const floorSize = GALLERY_RADIUS + 10;
-    const floorGeo = new THREE.PlaneGeometry(floorSize*2, floorSize*2);
-    const floorMat = new THREE.MeshStandardMaterial({ map: createWoodTexture(), roughness: 0.7, metalness: 0.05 });
+    const floorGeo = new THREE.PlaneGeometry((GALLERY_RADIUS + 20) * 2, (GALLERY_RADIUS + 20) * 2);
+    const floorMat = new THREE.MeshStandardMaterial({
+      map: createStudioFloorTexture(),
+      roughness: 0.35,
+      metalness: 0.1,
+      envMap: envTexture,
+      envMapIntensity: 0.3
+    });
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
-    floorMesh.rotation.x = -Math.PI/2;
-    floorMesh.receiveShadow = true;
+    floorMesh.rotation.x = -Math.PI / 2;
     floorMesh.position.y = 0;
     scene.add(floorMesh);
 
-    // ---------- PARED ----------
-    const wallHeight = 6.0;
-    const wallGeo = new THREE.CylinderGeometry(GALLERY_RADIUS, GALLERY_RADIUS, wallHeight, 80, 1, true);
-    const wallMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a, roughness: 0.9, side: THREE.DoubleSide });
+    const wallGeo = new THREE.CylinderGeometry(GALLERY_RADIUS, GALLERY_RADIUS, WALL_HEIGHT, 128, 1, true);
+    const wallMat = new THREE.MeshStandardMaterial({
+      map: createStudioWallTexture(),
+      roughness: 0.85,
+      metalness: 0.0,
+      side: THREE.BackSide
+    });
     const wallMesh = new THREE.Mesh(wallGeo, wallMat);
-    wallMesh.position.y = wallHeight/2;
-    wallMesh.receiveShadow = true;
+    wallMesh.position.y = WALL_HEIGHT / 2;
     scene.add(wallMesh);
 
-    // ---------- TECHO ----------
-    const ceilingGeo = new THREE.CircleGeometry(GALLERY_RADIUS, 80);
-    const ceilingMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.9, side: THREE.BackSide });
-    const ceilingMesh = new THREE.Mesh(ceilingGeo, ceilingMat);
-    ceilingMesh.rotation.x = -Math.PI/2;
-    ceilingMesh.position.y = wallHeight;
-    scene.add(ceilingMesh);
+    const railRadius = GALLERY_RADIUS - 0.7;
+    const railGeo = new THREE.TorusGeometry(railRadius, 0.018, 6, 128);
+    const railMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+    const railMesh = new THREE.Mesh(railGeo, railMat);
+    railMesh.rotation.x = Math.PI / 2;
+    railMesh.position.y = WALL_HEIGHT - 0.25;
+    scene.add(railMesh);
 
-    // ---------- CUADROS (365) ----------
+    const spotFixtureGeo = new THREE.CylinderGeometry(0.035, 0.05, 0.16, 8);
+    const spotFixtureMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8, roughness: 0.3 });
+    const instancedSpots = new THREE.InstancedMesh(spotFixtureGeo, spotFixtureMat, TOTAL_DAYS);
+    const dummy = new THREE.Object3D();
+    for (let i = 0; i < TOTAL_DAYS; i++) {
+      const angle = (i / TOTAL_DAYS) * Math.PI * 2;
+      const x = Math.sin(angle) * railRadius;
+      const z = Math.cos(angle) * railRadius;
+      dummy.position.set(x, WALL_HEIGHT - 0.35, z);
+      dummy.rotation.y = angle + Math.PI;
+      dummy.rotation.x = 0.42;
+      dummy.updateMatrix();
+      instancedSpots.setMatrixAt(i, dummy.matrix);
+    }
+    instancedSpots.instanceMatrix.needsUpdate = true;
+    scene.add(instancedSpots);
+
+    // ---------- CUADROS (orden en sentido horario, día 1 arriba) ----------
     const interactiveMeshes = [];
+
     const outerGeo = new THREE.BoxGeometry(FRAME_W, FRAME_H, FRAME_D);
-    const outerMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3, metalness: 0.3 });
-    const matGeo = new THREE.PlaneGeometry(FRAME_W - 0.05, FRAME_H - 0.05);
-    const matMat = new THREE.MeshBasicMaterial({ color: 0xe8e0d8 });
-    const canvasGeo = new THREE.PlaneGeometry(FRAME_W - 0.14, FRAME_H - 0.14);
+    const outerMat = new THREE.MeshStandardMaterial({
+      color: 0x050505,
+      roughness: 0.2,
+      metalness: 0.3,
+      envMap: envTexture,
+      envMapIntensity: 0.5
+    });
+
+    const matGeo = new THREE.PlaneGeometry(FRAME_W - 0.04, FRAME_H - 0.04);
+    const matMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+    const canvasGeo = new THREE.PlaneGeometry(FRAME_W - 0.08, FRAME_H - 0.08);
+
     const dropShadowTex = createDropShadowTexture();
     const spotlightTex = createSpotlightTexture();
-    const shadowGeo = new THREE.PlaneGeometry(FRAME_W * 1.6, FRAME_H * 1.6);
-    const shadowMat = new THREE.MeshBasicMaterial({ map: dropShadowTex, transparent: true, opacity: 0.4, depthWrite: false });
-    const spotHaloGeo = new THREE.PlaneGeometry(FRAME_W * 1.4, FRAME_W * 1.4);
-    const spotHaloMat = new THREE.MeshBasicMaterial({ map: spotlightTex, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending, depthWrite: false });
 
-    const paintingY = 1.6;
+    const shadowGeo = new THREE.PlaneGeometry(FRAME_W * 1.6, FRAME_H * 1.55);
+    const shadowMat = new THREE.MeshBasicMaterial({
+      map: dropShadowTex,
+      transparent: true,
+      opacity: 0.9,
+      depthWrite: false
+    });
+
+    const spotHaloGeo = new THREE.PlaneGeometry(FRAME_W * 2.2, FRAME_H * 1.8);
+    const spotHaloMat = new THREE.MeshBasicMaterial({
+      map: spotlightTex,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
 
     for (let i = 0; i < TOTAL_DAYS; i++) {
       const imgNum = (i % UNIQUE_IMAGES) + 1;
-      const angle = (i / TOTAL_DAYS) * Math.PI * 2;
+      // Ángulo: comenzamos desde arriba (π/2) y avanzamos en sentido horario
+      const angle = Math.PI / 2 - (i / TOTAL_DAYS) * Math.PI * 2;
       const container = new THREE.Group();
-      const x = Math.sin(angle) * (GALLERY_RADIUS - 0.15);
-      const z = Math.cos(angle) * (GALLERY_RADIUS - 0.15);
-      container.position.set(x, paintingY, z);
+
+      const x = Math.sin(angle) * (GALLERY_RADIUS - 0.08);
+      const z = Math.cos(angle) * (GALLERY_RADIUS - 0.08);
+      container.position.set(x, PAINTING_Y, z);
       container.rotation.y = angle + Math.PI;
 
-      const shadow = new THREE.Mesh(shadowGeo, shadowMat);
-      shadow.position.set(0, 0, -0.02);
-      container.add(shadow);
-
       const halo = new THREE.Mesh(spotHaloGeo, spotHaloMat);
-      halo.position.set(0, FRAME_H/2 + 0.15, -0.02);
+      halo.position.set(0, 0.48, -0.015);
       container.add(halo);
 
+      const shadow = new THREE.Mesh(shadowGeo, shadowMat);
+      shadow.position.set(0, -0.15, -0.012);
+      container.add(shadow);
+
       const frame = new THREE.Mesh(outerGeo, outerMat);
-      frame.castShadow = true;
       container.add(frame);
 
       const pp = new THREE.Mesh(matGeo, matMat);
-      pp.position.z = FRAME_D/2 + 0.001;
+      pp.position.z = FRAME_D / 2 + 0.001;
       container.add(pp);
 
-      const canvasMat = new THREE.MeshStandardMaterial({ map: textureCache[imgNum], roughness: 0.5, metalness: 0.05 });
+      const canvasMat = new THREE.MeshBasicMaterial({
+        map: textureCache[imgNum]
+      });
       const canvasMesh = new THREE.Mesh(canvasGeo, canvasMat);
-      canvasMesh.position.z = FRAME_D/2 + 0.004;
+      canvasMesh.position.z = FRAME_D / 2 + 0.003;
       canvasMesh.userData = { index: i, imgNum: imgNum };
       container.add(canvasMesh);
       interactiveMeshes.push(canvasMesh);
@@ -587,33 +981,46 @@
       scene.add(container);
     }
 
-    // ---------- CÁMARA Y CONTROLES ----------
-    const player = { pos: new THREE.Vector3(0, 1.6, 0), vel: new THREE.Vector3(), yaw: 0, pitch: 0, walkTime: 0 };
+    // ---------- CÁMARA Y NAVEGACIÓN ----------
+    // Posición inicial frente al cuadro #1 (ángulo π/2, eje X positivo)
+    const cuadro1Pos = new THREE.Vector3(GALLERY_RADIUS, PAINTING_Y, 0);
+    const finalCamPos = new THREE.Vector3(GALLERY_RADIUS - CAM_DIST, CAMERA_Y, 0);
+    const finalLookAt = new THREE.Vector3(GALLERY_RADIUS, CAMERA_Y, 0);
+
+    const player = {
+      pos: new THREE.Vector3(0, CAMERA_Y, 0),
+      vel: new THREE.Vector3(),
+      yaw: 0,
+      pitch: 0,
+      walkTime: 0,
+    };
     let targetYaw = 0, targetPitch = 0;
     let isDragging = false, startX = 0, startY = 0;
     let inInfoSpace = false;
     let startAnimationDone = false;
     const keys = { w: false, a: false, s: false, d: false };
 
-    // Posición final: frente al cuadro #1, a 2.5 m, con un ligero pitch para dramatismo
-    const finalCamPos = new THREE.Vector3(0, 1.7, GALLERY_RADIUS - 2.5);
-    const finalLookAt = new THREE.Vector3(0, 1.6, GALLERY_RADIUS);
+    // ---------- FLUJO: INTRO -> START -> SALA (lo único nuevo en la lógica) ----------
+    const introOverlay = document.getElementById('intro-overlay');
+    const startOverlay = document.getElementById('start-overlay');
+
+    document.getElementById('intro-btn').addEventListener('click', () => {
+      introOverlay.classList.add('hidden');
+      startOverlay.classList.add('visible');
+    });
 
     document.getElementById('start-btn').addEventListener('click', () => {
-      const overlay = document.getElementById('start-overlay');
-      overlay.classList.add('hidden');
-      camera.position.set(0, 1.6, 0);
-      camera.lookAt(0, 1.6, 0);
-      targetYaw = 0;
-      targetPitch = 0;
-      player.yaw = 0;
-      player.pitch = 0;
+      startOverlay.classList.add('hidden');
+      startOverlay.classList.remove('visible');
+      // Iniciamos desde una posición genérica pero animamos al cuadro 1
+      camera.position.set(0, CAMERA_Y, 0);
+      camera.lookAt(0, CAMERA_Y, 0);
 
       gsap.to(camera.position, {
         x: finalCamPos.x,
         y: finalCamPos.y,
         z: finalCamPos.z,
-        duration: 2.8,
+        duration: 2.2,
         ease: "power3.inOut",
         onUpdate: () => {
           camera.lookAt(finalLookAt);
@@ -621,20 +1028,19 @@
         onComplete: () => {
           startAnimationDone = true;
           player.pos.copy(finalCamPos);
-          player.pos.y = 1.7;
-          player.yaw = Math.PI;
-          player.pitch = -0.08; // ligera inclinación hacia abajo
+          // Yaw para mirar hacia el centro (dirección +X)
+          player.yaw = -Math.PI / 2;
+          player.pitch = 0.0;
           targetYaw = player.yaw;
           targetPitch = player.pitch;
           camera.position.copy(player.pos);
-          camera.rotation.set(0,0,0);
+          camera.rotation.set(0, 0, 0);
           camera.rotation.y = player.yaw;
           camera.rotation.x = player.pitch;
         }
       });
     });
 
-    // Controles
     window.addEventListener('keydown', e => {
       const k = e.key.toLowerCase();
       if (k === 'w' || e.key === 'ArrowUp') keys.w = true;
@@ -654,30 +1060,115 @@
     window.addEventListener('pointerdown', e => {
       if (inInfoSpace || e.target.closest('.nav-arrow-hitbox') || e.target.closest('#info-space')) return;
       isDragging = true;
-      startX = e.clientX; startY = e.clientY;
+      startX = e.clientX;
+      startY = e.clientY;
     });
     window.addEventListener('pointermove', e => {
-      mouseX = e.clientX; mouseY = e.clientY;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
       if (!isDragging || inInfoSpace || !startAnimationDone) return;
-      const dx = e.clientX - startX, dy = e.clientY - startY;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
       targetYaw -= dx * 0.0035;
       targetPitch -= dy * 0.0028;
-      targetPitch = Math.max(-1.2, Math.min(1.2, targetPitch));
-      startX = e.clientX; startY = e.clientY;
+      targetPitch = Math.max(-0.6, Math.min(0.6, targetPitch));
+      startX = e.clientX;
+      startY = e.clientY;
     });
     window.addEventListener('pointerup', () => { isDragging = false; });
 
-    document.getElementById('btnPrev').addEventListener('click', e => { e.stopPropagation(); if (startAnimationDone) targetYaw += Math.PI/4; });
-    document.getElementById('btnNext').addEventListener('click', e => { e.stopPropagation(); if (startAnimationDone) targetYaw -= Math.PI/4; });
-    window.addEventListener('wheel', e => { if (startAnimationDone && !inInfoSpace) targetYaw -= e.deltaY * 0.0012; }, { passive: true });
+    const stepAngle = (Math.PI * 2) / TOTAL_DAYS;
+    document.getElementById('btnPrev').addEventListener('click', e => {
+      e.stopPropagation();
+      if (startAnimationDone) targetYaw += stepAngle;
+    });
+    document.getElementById('btnNext').addEventListener('click', e => {
+      e.stopPropagation();
+      if (startAnimationDone) targetYaw -= stepAngle;
+    });
+    window.addEventListener('wheel', e => {
+      if (startAnimationDone && !inInfoSpace) targetYaw -= e.deltaY * 0.0006;
+    }, { passive: true });
 
-    // ---------- RAYCASTER E INFO ----------
+    // ---------- RAYCASTER Y MODAL CON INFORMACIÓN DE LA PONENCIA ----------
     const raycaster = new THREE.Raycaster();
     const mouseVec = new THREE.Vector2();
     const infoSpace = document.getElementById('info-space');
     const infoImg = document.getElementById('infoImg');
     const infoTitle = document.getElementById('infoTitle');
     const infoDate = document.getElementById('infoDate');
+    const infoDesc = document.getElementById('infoDesc');
+    const infoTechnique = document.getElementById('infoTechnique');
+    const infoDimensions = document.getElementById('infoDimensions');
+    const infoCollection = document.getElementById('infoCollection');
+    const infoArtist = document.getElementById('infoArtist');
+
+    const infoPrevBtn = document.getElementById('infoPrevBtn');
+    const infoNextBtn = document.getElementById('infoNextBtn');
+
+    let currentIndex = 0;
+
+    function get2024DateString(dayIndex) {
+      const d = new Date(2024, 0, 1);
+      d.setDate(d.getDate() + dayIndex);
+      return `${d.getDate()} de ${d.toLocaleString('es-ES', { month: 'short' })}`;
+    }
+
+    function updateModalWithIndex(index, animateCamera = true) {
+      const imgNum = (index % UNIQUE_IMAGES) + 1;
+      const dayNum = index + 1;
+      const themeIdx = (imgNum - 1) % UNIQUE_IMAGES;
+      const theme = THEMES[themeIdx];
+
+      infoImg.src = imageSources[imgNum] || '';
+      infoTitle.textContent = `Día ${dayNum} — ${theme.title}`;
+      infoDate.textContent = `${get2024DateString(index)} — Día ${dayNum} de ${TOTAL_DAYS}`;
+      infoDesc.textContent = theme.desc;
+      infoTechnique.textContent = theme.experiment;
+      infoDimensions.textContent = theme.author;
+      infoCollection.textContent = theme.context;
+      infoArtist.textContent = theme.concept;
+
+      const targetMesh = interactiveMeshes[index];
+      if (targetMesh) {
+        const targetPos = new THREE.Vector3();
+        targetMesh.getWorldPosition(targetPos);
+        const camTargetPos = targetPos.clone().add(targetMesh.getWorldDirection(new THREE.Vector3()).multiplyScalar(2.1));
+        if (animateCamera) {
+          gsap.to(camera.position, {
+            x: camTargetPos.x,
+            y: camTargetPos.y,
+            z: camTargetPos.z,
+            duration: 0.7,
+            ease: "power2.inOut"
+          });
+        } else {
+          camera.position.copy(camTargetPos);
+        }
+      }
+      currentIndex = index;
+    }
+
+    function openInfoSpace(index, targetMesh) {
+      if (inInfoSpace) return;
+      inInfoSpace = true;
+      document.body.classList.add('in-info-space');
+
+      updateModalWithIndex(index, false);
+
+      const targetPos = new THREE.Vector3();
+      targetMesh.getWorldPosition(targetPos);
+      const camTargetPos = targetPos.clone().add(targetMesh.getWorldDirection(new THREE.Vector3()).multiplyScalar(2.1));
+      gsap.to(camera.position, {
+        x: camTargetPos.x,
+        y: camTargetPos.y,
+        z: camTargetPos.z,
+        duration: 0.9,
+        ease: "power2.inOut"
+      });
+
+      setTimeout(() => { infoSpace.classList.add('active'); }, 400);
+    }
 
     window.addEventListener('click', e => {
       if (inInfoSpace || e.target.closest('.nav-arrow-hitbox') || isDragging || !startAnimationDone) return;
@@ -687,41 +1178,43 @@
       const intersects = raycaster.intersectObjects(interactiveMeshes);
       if (intersects.length > 0) {
         const data = intersects[0].object.userData;
-        openInfoSpace(data.index, data.imgNum, intersects[0].object);
+        openInfoSpace(data.index, intersects[0].object);
       }
     });
 
-    function openInfoSpace(index, imgNum, targetMesh) {
-      if (inInfoSpace) return;
-      inInfoSpace = true;
-      document.body.classList.add('in-info-space');
-      infoImg.src = imageSources[imgNum] || '';
-      const dayNum = index + 1;
-      infoTitle.textContent = `Obra #${dayNum} — Serie 365days`;
-      infoDate.textContent = `Día ${dayNum} de ${TOTAL_DAYS} | ${get2024DateString(index)}`;
+    infoPrevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!inInfoSpace) return;
+      const newIndex = (currentIndex - 1 + TOTAL_DAYS) % TOTAL_DAYS;
+      updateModalWithIndex(newIndex, true);
+    });
 
-      const targetPos = new THREE.Vector3();
-      targetMesh.getWorldPosition(targetPos);
-      const camTargetPos = targetPos.clone().add(targetMesh.getWorldDirection(new THREE.Vector3()).multiplyScalar(2.0));
-      gsap.to(camera.position, { x: camTargetPos.x, y: camTargetPos.y, z: camTargetPos.z, duration: 0.9, ease: "power2.inOut" });
-      setTimeout(() => { infoSpace.classList.add('active'); }, 450);
-    }
+    infoNextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!inInfoSpace) return;
+      const newIndex = (currentIndex + 1) % TOTAL_DAYS;
+      updateModalWithIndex(newIndex, true);
+    });
 
     function closeInfoSpace() {
       if (!inInfoSpace) return;
       infoSpace.classList.remove('active');
       document.body.classList.remove('in-info-space');
-      gsap.to(camera.position, { x: player.pos.x, y: player.pos.y, z: player.pos.z, duration: 0.8, ease: "power3.out", onComplete: () => { inInfoSpace = false; } });
+      gsap.to(camera.position, {
+        x: player.pos.x,
+        y: player.pos.y,
+        z: player.pos.z,
+        duration: 0.8,
+        ease: "power3.out",
+        onComplete: () => { inInfoSpace = false; }
+      });
     }
     document.getElementById('btnCloseInfo').addEventListener('click', closeInfoSpace);
     document.getElementById('btnReturn').addEventListener('click', closeInfoSpace);
 
-    // ---------- HUD (oculto) ----------
-    function get2024DateString(dayIndex) { const d = new Date(2024,0,1); d.setDate(d.getDate()+dayIndex); return `${d.getDate()} de ${d.toLocaleString('es-ES',{month:'short'})}`; }
-
-    // ---------- CURSOR ----------
+    // ---------- CURSOR FLUIDO ----------
     const cursor = document.getElementById('fluid-cursor');
-    let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
+    let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
     let cursorX = mouseX, cursorY = mouseY;
     const btnPrev = document.getElementById('btnPrev'), btnNext = document.getElementById('btnNext');
     btnPrev.addEventListener('mouseenter', () => cursor.classList.add('bubble-mode'));
@@ -729,14 +1222,28 @@
     btnNext.addEventListener('mouseenter', () => cursor.classList.add('bubble-mode'));
     btnNext.addEventListener('mouseleave', () => cursor.classList.remove('bubble-mode'));
 
-    // ---------- LOOP PRINCIPAL ----------
+    // ---------- POST-PROCESADO ----------
+    const composer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass);
+
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth * 0.5, window.innerHeight * 0.5),
+      0.2,
+      0.3,
+      0.7
+    );
+    composer.addPass(bloomPass);
+
+    // ---------- BUCLE DE ANIMACIÓN ----------
     const clock = new THREE.Clock();
+
     function animate() {
       requestAnimationFrame(animate);
       const dt = clock.getDelta();
 
-      cursorX += (mouseX - cursorX) * 0.22;
-      cursorY += (mouseY - cursorY) * 0.22;
+      cursorX += (mouseX - cursorX) * 0.25;
+      cursorY += (mouseY - cursorY) * 0.25;
       cursor.style.left = `${cursorX}px`;
       cursor.style.top = `${cursorY}px`;
 
@@ -751,43 +1258,48 @@
         if (keys.d) moveDir.x += 1;
         if (moveDir.lengthSq() > 0) {
           moveDir.normalize();
-          moveDir.applyAxisAngle(new THREE.Vector3(0,1,0), player.yaw);
+          moveDir.applyAxisAngle(new THREE.Vector3(0, 1, 0), player.yaw);
           const speed = 6.0;
           player.vel.x += moveDir.x * speed * dt * 8.0;
           player.vel.z += moveDir.z * speed * dt * 8.0;
           player.walkTime += dt * 9.0;
-          player.pos.y = 1.6 + Math.sin(player.walkTime) * 0.025;
+          player.pos.y = CAMERA_Y + Math.sin(player.walkTime) * 0.015;
         } else {
-          player.pos.y += (1.6 - player.pos.y) * 0.1;
+          player.pos.y += (CAMERA_Y - player.pos.y) * 0.1;
         }
         player.vel.x *= 0.86;
         player.vel.z *= 0.86;
         player.pos.x += player.vel.x * dt;
         player.pos.z += player.vel.z * dt;
 
-        const maxDist = GALLERY_RADIUS - 2.0;
-        const dist = Math.sqrt(player.pos.x*player.pos.x + player.pos.z*player.pos.z);
-        if (dist > maxDist) { player.pos.x = (player.pos.x/dist)*maxDist; player.pos.z = (player.pos.z/dist)*maxDist; }
+        const maxDist = GALLERY_RADIUS - 2.5;
+        const dist = Math.sqrt(player.pos.x * player.pos.x + player.pos.z * player.pos.z);
+        if (dist > maxDist) {
+          player.pos.x = (player.pos.x / dist) * maxDist;
+          player.pos.z = (player.pos.z / dist) * maxDist;
+        }
 
         camera.position.copy(player.pos);
-        camera.rotation.set(0,0,0);
+        camera.rotation.set(0, 0, 0);
         camera.rotation.y = player.yaw;
         camera.rotation.x = player.pitch;
       }
 
-      renderer.render(scene, camera);
+      composer.render();
     }
     animate();
 
     window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
+      bloomPass.resolution.set(window.innerWidth * 0.5, window.innerHeight * 0.5);
     });
 
     if (!startAnimationDone) {
-      camera.position.set(0, 1.6, 0);
-      camera.lookAt(0, 1.6, 0);
+      camera.position.set(0, CAMERA_Y, 0);
+      camera.lookAt(0, CAMERA_Y, 0);
     }
   </script>
 </body>
