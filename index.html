@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Three.js -->
   <script type="importmap">
@@ -65,6 +65,34 @@
       background: radial-gradient(ellipse at center, transparent 45%, rgba(20, 22, 26, 0.4) 100%);
     }
 
+    /* ===== TÍTULO FLOTANTE SUPERIOR (Estilo de la imagen de referencia) ===== */
+    #floating-art-title {
+      position: fixed;
+      top: 11vh;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      pointer-events: none;
+      font-size: clamp(1.4rem, 2.3vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      text-align: center;
+      text-shadow: 
+        0 0 12px rgba(255, 255, 255, 0.9),
+        0 0 28px rgba(255, 255, 255, 0.5),
+        0 2px 10px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease;
+      white-space: nowrap;
+    }
+    #floating-art-title.visible {
+      opacity: 1;
+    }
+    body.in-info-space #floating-art-title {
+      opacity: 0;
+    }
+
     .nav-arrow-hitbox {
       position: fixed;
       top: 50%;
@@ -100,7 +128,7 @@
       pointer-events: none;
     }
 
-    /* ===== PANTALLA DE INTRODUCCIÓN (lo único agregado antes de la sala) ===== */
+    /* ===== PANTALLA DE INTRODUCCIÓN ===== */
     #intro-overlay {
       position: fixed;
       inset: 0;
@@ -403,7 +431,6 @@
       stroke-width: 2;
     }
 
-    /* Botones de navegación dentro del modal */
     .info-nav {
       display: flex;
       gap: 1.2rem;
@@ -437,6 +464,9 @@
   <canvas id="webgl-canvas"></canvas>
   <div class="film-grain"></div>
   <div class="vignette"></div>
+
+  <!-- Título flotante encima del cuadro central -->
+  <div id="floating-art-title">Conformidad (Asch)</div>
 
   <div id="intro-overlay">
     <div class="intro-eyebrow">Ponencia individual · Psicología Social II</div>
@@ -479,7 +509,6 @@
           <div class="spec-item"><span class="spec-label">Contexto</span><span class="spec-val" id="infoCollection">—</span></div>
           <div class="spec-item"><span class="spec-label">Concepto</span><span class="spec-val" id="infoArtist">—</span></div>
         </div>
-        <!-- Botones de navegación entre cuadros -->
         <div class="info-nav">
           <button class="info-nav-btn" id="infoPrevBtn">◀ Anterior</button>
           <button class="info-nav-btn" id="infoNextBtn">Siguiente ▶</button>
@@ -497,7 +526,7 @@
     import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-    // ---------- CONFIGURACIÓN (idéntica al archivo original) ----------
+    // ---------- CONFIGURACIÓN ----------
     const TOTAL_DAYS = 366;
     const UNIQUE_IMAGES = 8;
     const GALLERY_RADIUS = 100;
@@ -509,7 +538,7 @@
     const CAMERA_Y = 1.50;
     const CAM_DIST = 3.25;
 
-    // ---------- CONTENIDO DE LA PONENCIA (8 TEMAS QUE SE REPITEN EN EL CICLO DE 366) ----------
+    // ---------- CONTENIDO DE LA PONENCIA ----------
     const THEMES = [
       {
         title: 'Conformidad (Asch)',
@@ -576,6 +605,9 @@
         concept: 'Innovación y disidencia'
       }
     ];
+
+    // Elemento del título flotante
+    const floatingArtTitle = document.getElementById('floating-art-title');
 
     // ---------- TEXTURAS Y GENERACIÓN DE OBRAS ----------
     function createDropShadowTexture() {
@@ -670,7 +702,7 @@
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
 
-      const imgNum = ((index - 1) % UNIQUE_IMAGES) + 1; // 1..8
+      const imgNum = ((index - 1) % UNIQUE_IMAGES) + 1;
 
       if (imgNum === 1) {
         ctx.lineWidth = 45;
@@ -906,7 +938,7 @@
     instancedSpots.instanceMatrix.needsUpdate = true;
     scene.add(instancedSpots);
 
-    // ---------- CUADROS (orden en sentido horario, día 1 arriba) ----------
+    // ---------- CUADROS ----------
     const interactiveMeshes = [];
 
     const outerGeo = new THREE.BoxGeometry(FRAME_W, FRAME_H, FRAME_D);
@@ -945,7 +977,6 @@
 
     for (let i = 0; i < TOTAL_DAYS; i++) {
       const imgNum = (i % UNIQUE_IMAGES) + 1;
-      // Ángulo: comenzamos desde arriba (π/2) y avanzamos en sentido horario
       const angle = Math.PI / 2 - (i / TOTAL_DAYS) * Math.PI * 2;
       const container = new THREE.Group();
 
@@ -982,8 +1013,6 @@
     }
 
     // ---------- CÁMARA Y NAVEGACIÓN ----------
-    // Posición inicial frente al cuadro #1 (ángulo π/2, eje X positivo)
-    const cuadro1Pos = new THREE.Vector3(GALLERY_RADIUS, PAINTING_Y, 0);
     const finalCamPos = new THREE.Vector3(GALLERY_RADIUS - CAM_DIST, CAMERA_Y, 0);
     const finalLookAt = new THREE.Vector3(GALLERY_RADIUS, CAMERA_Y, 0);
 
@@ -1000,7 +1029,7 @@
     let startAnimationDone = false;
     const keys = { w: false, a: false, s: false, d: false };
 
-    // ---------- FLUJO: INTRO -> START -> SALA (lo único nuevo en la lógica) ----------
+    // ---------- FLUJO: INTRO -> START -> SALA ----------
     const introOverlay = document.getElementById('intro-overlay');
     const startOverlay = document.getElementById('start-overlay');
 
@@ -1012,7 +1041,6 @@
     document.getElementById('start-btn').addEventListener('click', () => {
       startOverlay.classList.add('hidden');
       startOverlay.classList.remove('visible');
-      // Iniciamos desde una posición genérica pero animamos al cuadro 1
       camera.position.set(0, CAMERA_Y, 0);
       camera.lookAt(0, CAMERA_Y, 0);
 
@@ -1028,7 +1056,6 @@
         onComplete: () => {
           startAnimationDone = true;
           player.pos.copy(finalCamPos);
-          // Yaw para mirar hacia el centro (dirección +X)
           player.yaw = -Math.PI / 2;
           player.pitch = 0.0;
           targetYaw = player.yaw;
@@ -1037,6 +1064,7 @@
           camera.rotation.set(0, 0, 0);
           camera.rotation.y = player.yaw;
           camera.rotation.x = player.pitch;
+          floatingArtTitle.classList.add('visible');
         }
       });
     });
@@ -1090,7 +1118,7 @@
       if (startAnimationDone && !inInfoSpace) targetYaw -= e.deltaY * 0.0006;
     }, { passive: true });
 
-    // ---------- RAYCASTER Y MODAL CON INFORMACIÓN DE LA PONENCIA ----------
+    // ---------- MODAL ----------
     const raycaster = new THREE.Raycaster();
     const mouseVec = new THREE.Vector2();
     const infoSpace = document.getElementById('info-space');
@@ -1283,6 +1311,20 @@
         camera.rotation.set(0, 0, 0);
         camera.rotation.y = player.yaw;
         camera.rotation.x = player.pitch;
+
+        // CÁLCULO DINÁMICO DEL TEMA FRENTE A LA CÁMARA
+        const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+        const targetPointX = camera.position.x + forward.x * CAM_DIST;
+        const targetPointZ = camera.position.z + forward.z * CAM_DIST;
+        const theta = Math.atan2(targetPointX, targetPointZ);
+        let norm = (Math.PI / 2 - theta) / (Math.PI * 2);
+        norm = ((norm % 1) + 1) % 1;
+        const currentActiveIndex = Math.round(norm * TOTAL_DAYS) % TOTAL_DAYS;
+        const activeTheme = THEMES[currentActiveIndex % THEMES.length];
+        
+        if (floatingArtTitle.textContent !== activeTheme.title) {
+          floatingArtTitle.textContent = activeTheme.title;
+        }
       }
 
       composer.render();
