@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>La bata blanca digital — Yenny Peña</title>
+  <title>Ponencia: Conformidad y Obediencia — Yenny Peña</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
 
   <!-- Three.js -->
   <script type="importmap">
@@ -29,13 +29,13 @@
       padding: 0;
       user-select: none;
       -webkit-user-select: none;
-      cursor: none !important;
+      cursor: default;
     }
     html, body {
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background: #6e747e;
+      background: #4f5561;
       font-family: "Plus Jakarta Sans", sans-serif;
       color: #ffffff;
     }
@@ -62,28 +62,30 @@
       inset: 0;
       z-index: 3;
       pointer-events: none;
-      background: radial-gradient(ellipse at center, transparent 45%, rgba(20, 22, 26, 0.4) 100%);
+      background: radial-gradient(ellipse at center, transparent 45%, rgba(15, 17, 20, 0.55) 100%);
     }
 
-    /* ===== TÍTULO FLOTANTE SUPERIOR (Estilo de la imagen de referencia) ===== */
+    /* ===== TÍTULO FLOTANTE EN SALA ===== */
     #floating-art-title {
       position: fixed;
-      top: 11vh;
+      top: 7vh;
       left: 50%;
       transform: translateX(-50%);
       z-index: 20;
       pointer-events: none;
-      font-size: clamp(1.4rem, 2.3vw, 2.2rem);
+      font-size: clamp(1rem, 1.6vw, 1.4rem);
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
       color: #ffffff;
       text-align: center;
-      text-shadow: 
-        0 0 12px rgba(255, 255, 255, 0.9),
-        0 0 28px rgba(255, 255, 255, 0.5),
-        0 2px 10px rgba(0, 0, 0, 0.5);
+      background: rgba(18, 20, 24, 0.75);
+      backdrop-filter: blur(12px);
+      padding: 0.5rem 1.8rem;
+      border-radius: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       opacity: 0;
-      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease;
+      transition: opacity 0.4s ease;
       white-space: nowrap;
     }
     #floating-art-title.visible {
@@ -93,204 +95,181 @@
       opacity: 0;
     }
 
+    /* NAVEGACIÓN LATERAL */
     .nav-arrow-hitbox {
       position: fixed;
       top: 50%;
       transform: translateY(-50%);
-      width: 70px;
-      height: 140px;
+      width: 60px;
+      height: 110px;
       z-index: 25;
       display: flex;
       align-items: center;
       justify-content: center;
       pointer-events: auto;
-      transition: opacity 0.3s ease;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.25s ease;
+      cursor: pointer !important;
     }
-    .arrow-left-box { left: 4.5vw; }
-    .arrow-right-box { right: 4.5vw; }
+    .arrow-left-box { left: 2.5vw; }
+    .arrow-right-box { right: 2.5vw; }
     .nav-arrow-glyph {
-      width: 44px;
-      height: 44px;
-      stroke: rgba(255, 255, 255, 0.7);
-      stroke-width: 1.4;
+      width: 30px;
+      height: 30px;
+      stroke: #ffffff;
+      stroke-width: 2;
       fill: none;
       stroke-linecap: round;
       stroke-linejoin: round;
-      transition: transform 0.3s ease, stroke 0.3s ease;
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
     }
-    .nav-arrow-hitbox:hover .nav-arrow-glyph {
-      stroke: #ffffff;
-      transform: scale(1.15);
+    .nav-arrow-hitbox:hover {
+      background: rgba(255, 255, 255, 0.22);
+      transform: translateY(-50%) scale(1.06);
     }
     body.in-info-space .nav-arrow-hitbox {
       opacity: 0;
       pointer-events: none;
     }
 
-    /* ===== PANTALLA DE INTRODUCCIÓN ===== */
+    /* ACCESO DIRECTO INFERIOR */
+    #quick-dots {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      display: flex;
+      gap: 10px;
+      background: rgba(15, 17, 21, 0.75);
+      backdrop-filter: blur(12px);
+      padding: 8px 18px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    #quick-dots.visible {
+      opacity: 1;
+    }
+    body.in-info-space #quick-dots {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .dot-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer !important;
+      transition: all 0.2s ease;
+    }
+    .dot-btn:hover, .dot-btn.active {
+      background: #ffffff;
+      color: #111;
+      transform: scale(1.15);
+    }
+
+    /* ===== INTRODUCCIÓN ===== */
     #intro-overlay {
       position: fixed;
       inset: 0;
       z-index: 110;
-      background: radial-gradient(circle at center, rgba(110, 116, 126, 0.97) 0%, rgba(30, 32, 37, 0.99) 100%);
-      backdrop-filter: blur(14px);
+      background: radial-gradient(circle at center, rgba(65, 72, 84, 0.98) 0%, rgba(18, 20, 25, 0.99) 100%);
+      backdrop-filter: blur(16px);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 2rem;
-      transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 2.5rem;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
     #intro-overlay.hidden {
       opacity: 0;
       pointer-events: none;
     }
     .intro-eyebrow {
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 700;
-      letter-spacing: 0.25em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.55);
-      margin-bottom: 1.2rem;
+      color: #e2b144;
+      margin-bottom: 1.1rem;
+      background: rgba(226, 177, 68, 0.12);
+      padding: 0.4rem 1.2rem;
+      border-radius: 20px;
+      border: 1px solid rgba(226, 177, 68, 0.25);
     }
     .intro-title {
-      font-size: clamp(2.2rem, 6vw, 4.2rem);
+      font-size: clamp(2.2rem, 4.8vw, 3.8rem);
       font-weight: 800;
       letter-spacing: -0.03em;
-      line-height: 1.05;
-      max-width: 900px;
-      margin-bottom: 1rem;
+      line-height: 1.1;
+      max-width: 920px;
+      margin-bottom: 1.2rem;
     }
     .intro-subtitle {
-      font-size: clamp(1rem, 2vw, 1.3rem);
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
       font-weight: 400;
-      color: rgba(255,255,255,0.75);
-      max-width: 620px;
-      line-height: 1.55;
-      margin-bottom: 2.2rem;
+      color: rgba(255,255,255,0.85);
+      max-width: 700px;
+      line-height: 1.6;
+      margin-bottom: 2rem;
     }
-    .intro-author {
-      font-size: 1.05rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: #ffffff;
-      margin-bottom: 0.35rem;
+    .intro-meta-box {
+      display: flex;
+      gap: 2.5rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
     }
-    .intro-course {
-      font-size: 0.85rem;
-      font-weight: 400;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 2.8rem;
+    .intro-meta-item strong {
+      color: #fff;
     }
     #intro-btn {
-      padding: 1.1rem 3.5rem;
-      border: 1.5px solid rgba(255, 255, 255, 0.5);
+      padding: 1.1rem 3.6rem;
+      border: none;
       border-radius: 60px;
-      background: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      font-size: 1.1rem;
-      font-weight: 600;
-      letter-spacing: 0.18em;
+      background: #ffffff;
+      color: #121418;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
       cursor: pointer !important;
-      transition: all 0.35s ease;
-      backdrop-filter: blur(8px);
+      transition: all 0.3s ease;
       font-family: "Plus Jakarta Sans", sans-serif;
-      text-transform: uppercase;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     }
     #intro-btn:hover {
-      background: #ffffff;
-      color: #1a1a1a;
-      transform: translateY(-2px) scale(1.04);
-      box-shadow: 0 16px 36px rgba(0,0,0,0.35);
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 16px 40px rgba(255, 255, 255, 0.2);
     }
 
-    #start-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      background: radial-gradient(circle at center, rgba(110, 116, 126, 0.95) 0%, rgba(45, 48, 54, 0.98) 100%);
-      backdrop-filter: blur(12px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    #start-overlay.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    #start-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-    #start-btn {
-      padding: 1.1rem 3.5rem;
-      border: 1.5px solid rgba(255, 255, 255, 0.5);
-      border-radius: 60px;
-      background: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      font-size: 1.1rem;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      cursor: pointer !important;
-      transition: all 0.35s ease;
-      backdrop-filter: blur(8px);
-      font-family: "Plus Jakarta Sans", sans-serif;
-      text-transform: uppercase;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    }
-    #start-btn:hover {
-      background: #ffffff;
-      color: #1a1a1a;
-      transform: translateY(-2px) scale(1.04);
-      box-shadow: 0 16px 36px rgba(0,0,0,0.35);
-    }
-
-    #fluid-cursor {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 8px;
-      height: 8px;
-      background: #ffffff;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
-      transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-    }
-    #fluid-cursor.bubble-mode {
-      width: 44px;
-      height: 44px;
-      background: rgba(255, 255, 255, 0.15);
-      box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-    }
-    body.in-info-space #fluid-cursor {
-      background: #111;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
-    }
-
+    /* ===== MODAL DE CONTENIDO EXPANDIDO ===== */
     #info-space {
       position: fixed;
       inset: 0;
       z-index: 50;
-      background: #f5f5f3;
-      color: #1a1a1a;
+      background: rgba(12, 14, 18, 0.95);
+      backdrop-filter: blur(20px);
+      color: #f1f3f5;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: clamp(2rem, 5vw, 5rem);
+      padding: clamp(1.5rem, 3vw, 3.5rem);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
     #info-space.active {
       opacity: 1;
@@ -298,76 +277,53 @@
     }
     .info-container {
       width: 100%;
-      max-width: 1050px;
+      max-width: 1180px;
+      height: 86vh;
+      background: #1b1f26;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
       display: grid;
-      grid-template-columns: 1fr 1.15fr;
-      gap: clamp(2rem, 5vw, 4.5rem);
-      align-items: center;
+      grid-template-columns: 380px 1fr;
+      overflow: hidden;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+    }
+
+    /* COLUMNA IZQUIERDA */
+    .info-left-col {
+      background: #14171d;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      overflow-y: auto;
     }
     .info-artwork-box {
       width: 100%;
-      max-width: 420px;
-      justify-self: center;
-      aspect-ratio: 3/4.2;
-      background: #0d0d0d;
-      padding: 10px;
-      border-radius: 4px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+      height: 260px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0d0f13;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
     }
     .info-artwork-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      border-radius: 2px;
-    }
-    .info-details {
-      display: flex;
-      flex-direction: column;
-      gap: 1.1rem;
-    }
-    .info-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: #777;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-    .info-badge::before {
-      content: '';
-      width: 7px;
-      height: 7px;
-      background: #d43b2c;
-      border-radius: 50%;
-    }
-    .info-title {
-      font-size: clamp(2rem, 3.2vw, 3rem);
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      line-height: 1.05;
-      color: #111;
-    }
-    .info-date-tag {
-      font-size: 1rem;
-      color: #666;
-      font-weight: 600;
-    }
-    .info-desc {
-      font-size: clamp(0.95rem, 1.1vw, 1.05rem);
-      line-height: 1.6;
-      color: #444;
-      font-weight: 400;
-      max-width: 500px;
     }
     .info-specs-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      border-top: 1px solid rgba(0, 0, 0, 0.1);
-      padding-top: 1.2rem;
+      grid-template-columns: 1fr;
+      gap: 0.8rem;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 1.1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
     .spec-item {
       display: flex;
@@ -376,85 +332,176 @@
     }
     .spec-label {
       font-size: 0.7rem;
-      font-weight: 600;
-      color: #888;
+      font-weight: 700;
+      color: #e2b144;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
     }
     .spec-val {
-      font-size: 0.92rem;
+      font-size: 0.88rem;
       font-weight: 600;
-      color: #1a1a1a;
+      color: #e2e8f0;
+      line-height: 1.35;
     }
-    .btn-return-gallery {
+
+    /* COLUMNA DERECHA */
+    .info-right-col {
+      padding: 2.2rem 2.8rem;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      gap: 1.3rem;
+    }
+    .info-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 0.9rem;
+    }
+    .info-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.6rem;
-      margin-top: 0.8rem;
-      background: #111;
+      gap: 0.4rem;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.35rem;
+    }
+    .info-badge::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      background: #38bdf8;
+      border-radius: 50%;
+    }
+    .info-title {
+      font-size: clamp(1.4rem, 2.1vw, 2.1rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      color: #ffffff;
+    }
+
+    .info-content-card {
+      background: rgba(255, 255, 255, 0.04);
+      border-left: 3px solid #38bdf8;
+      padding: 1.2rem 1.4rem;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.96rem;
+      line-height: 1.65;
+      color: #e2e8f0;
+    }
+    .info-content-card ul {
+      margin-left: 1.2rem;
+      margin-top: 0.6rem;
+    }
+    .info-content-card li {
+      margin-bottom: 0.45rem;
+    }
+
+    /* CAJA DE ANÁLISIS CONCEPTUAL */
+    .analysis-card {
+      background: rgba(226, 177, 68, 0.08);
+      border: 1px solid rgba(226, 177, 68, 0.28);
+      border-radius: 12px;
+      padding: 1.1rem 1.4rem;
+    }
+    .analysis-card-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #ecc94b;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .analysis-card-body {
+      font-size: 0.92rem;
+      line-height: 1.55;
+      color: #f7fafc;
+    }
+
+    /* BARRA INFERIOR */
+    .info-bottom-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 1.2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .info-nav-group {
+      display: flex;
+      gap: 0.8rem;
+    }
+    .info-btn-action {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 30px;
+      padding: 0.6rem 1.4rem;
+      font-size: 0.85rem;
+      font-weight: 700;
       color: #fff;
-      padding: 0.9rem 1.8rem;
-      border-radius: 50px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: transform 0.25s ease, background 0.25s ease;
-      align-self: flex-start;
-      border: none;
       cursor: pointer !important;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .info-btn-action:hover {
+      background: #ffffff;
+      color: #111;
+      border-color: #fff;
+    }
+    .btn-return-gallery {
+      background: #38bdf8;
+      color: #0b1120;
+      border-color: #38bdf8;
     }
     .btn-return-gallery:hover {
-      background: #000;
-      transform: translateY(-2px);
+      background: #7dd3fc;
+      color: #0b1120;
     }
+
     .info-close-btn {
       position: absolute;
-      top: 2.5rem;
-      right: 3rem;
-      width: 44px;
-      height: 44px;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      border: 1px solid rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.4);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer !important;
-      transition: transform 0.3s ease, background 0.3s ease;
+      transition: transform 0.2s ease, background 0.2s ease;
+      z-index: 60;
     }
     .info-close-btn:hover {
-      transform: rotate(90deg) scale(1.08);
-      background: rgba(0, 0, 0, 0.05);
+      transform: scale(1.08);
+      background: rgba(255, 255, 255, 0.2);
     }
     .info-close-btn svg {
-      width: 20px;
-      height: 20px;
-      stroke: #1a1a1a;
-      stroke-width: 2;
+      width: 18px;
+      height: 18px;
+      stroke: #ffffff;
+      stroke-width: 2.2;
     }
 
-    .info-nav {
-      display: flex;
-      gap: 1.2rem;
-      margin-top: 0.5rem;
-      align-self: flex-start;
-    }
-    .info-nav-btn {
-      background: none;
-      border: 1.5px solid #aaa;
-      border-radius: 30px;
-      padding: 0.5rem 1.4rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #333;
-      cursor: pointer !important;
-      transition: all 0.25s ease;
-      font-family: "Plus Jakarta Sans", sans-serif;
-      letter-spacing: 0.03em;
-    }
-    .info-nav-btn:hover {
-      background: #111;
-      border-color: #111;
-      color: #fff;
-      transform: scale(1.02);
+    @media (max-width: 950px) {
+      .info-container {
+        grid-template-columns: 1fr;
+        height: 90vh;
+        overflow-y: auto;
+      }
+      .info-left-col {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
     }
   </style>
 </head>
@@ -465,22 +512,36 @@
   <div class="film-grain"></div>
   <div class="vignette"></div>
 
-  <!-- Título flotante encima del cuadro central -->
-  <div id="floating-art-title">Conformidad (Asch)</div>
+  <!-- Título flotante -->
+  <div id="floating-art-title">Cuadro 1 · El Investigador (Milgram)</div>
 
+  <!-- Barra de diapositivas 1 a 8 -->
+  <div id="quick-dots">
+    <div class="dot-btn active" data-index="0">1</div>
+    <div class="dot-btn" data-index="1">2</div>
+    <div class="dot-btn" data-index="2">3</div>
+    <div class="dot-btn" data-index="3">4</div>
+    <div class="dot-btn" data-index="4">5</div>
+    <div class="dot-btn" data-index="5">6</div>
+    <div class="dot-btn" data-index="6">7</div>
+    <div class="dot-btn" data-index="7">8</div>
+  </div>
+
+  <!-- PANTALLA INICIAL DE PRESENTACIÓN -->
   <div id="intro-overlay">
-    <div class="intro-eyebrow">Ponencia individual · Psicología Social II</div>
-    <h1 class="intro-title">La bata blanca digital</h1>
-    <p class="intro-subtitle">Conformidad y obediencia en psicología social: de los experimentos de Asch y Milgram al consenso fabricado por los algoritmos de hoy.</p>
-    <div class="intro-author">Yenny Peña</div>
-    <div class="intro-course">Basado en Levine &amp; Pavelchak y Doms &amp; Moscovici — <em>Psicología social</em> (S. Moscovici, comp.)</div>
-    <button id="intro-btn">Comenzar</button>
+    <div class="intro-eyebrow">Psicología Social · Ponencia Individual</div>
+    <h1 class="intro-title">Conformidad y Obediencia a la Autoridad</h1>
+    <p class="intro-subtitle">
+      Un recorrido sistemático por los estudios de <strong>Solomon Asch</strong> y <strong>Stanley Milgram</strong>: desde la experimentación clásica de laboratorio hasta los mecanismos de influencia en la era digital.
+    </p>
+    <div class="intro-meta-box">
+      <div class="intro-meta-item">Ponente: <strong>Yenny Peña</strong></div>
+      <div class="intro-meta-item">Enfoque: <strong>Investigación Experimental</strong></div>
+    </div>
+    <button id="intro-btn">INICIAR PRESENTACIÓN</button>
   </div>
 
-  <div id="start-overlay">
-    <button id="start-btn">EXPLORAR</button>
-  </div>
-
+  <!-- FLECHAS DE NAVEGACIÓN EN SALA -->
   <div class="nav-arrow-hitbox arrow-left-box" id="btnPrev">
     <svg class="nav-arrow-glyph" viewBox="0 0 24 24"><polyline points="15 19 8 12 15 5"></polyline></svg>
   </div>
@@ -488,32 +549,61 @@
     <svg class="nav-arrow-glyph" viewBox="0 0 24 24"><polyline points="9 19 16 12 9 5"></polyline></svg>
   </div>
 
-  <div id="fluid-cursor"></div>
-
+  <!-- MODAL DE CONTENIDO -->
   <div id="info-space">
-    <div class="info-close-btn" id="btnCloseInfo" title="Volver (ESC)">
+    <div class="info-close-btn" id="btnCloseInfo" title="Cerrar (ESC)">
       <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </div>
+
     <div class="info-container">
-      <div class="info-artwork-box">
-        <img class="info-artwork-img" id="infoImg" src="" alt="Obra" />
-      </div>
-      <div class="info-details">
-        <div class="info-badge">Ponencia: La bata blanca digital</div>
-        <h1 class="info-title" id="infoTitle">Día 1 — Conformidad (Asch)</h1>
-        <div class="info-date-tag" id="infoDate">1 de enero de 2024</div>
-        <p class="info-desc" id="infoDesc">Descripción del tema.</p>
+      <!-- Columna Izquierda -->
+      <div class="info-left-col">
+        <div class="info-artwork-box">
+          <img class="info-artwork-img" id="infoImg" src="" alt="Ilustración" referrerpolicy="no-referrer" crossorigin="anonymous" />
+        </div>
         <div class="info-specs-grid">
-          <div class="spec-item"><span class="spec-label">Experimento</span><span class="spec-val" id="infoTechnique">—</span></div>
-          <div class="spec-item"><span class="spec-label">Autor</span><span class="spec-val" id="infoDimensions">—</span></div>
-          <div class="spec-item"><span class="spec-label">Contexto</span><span class="spec-val" id="infoCollection">—</span></div>
-          <div class="spec-item"><span class="spec-label">Concepto</span><span class="spec-val" id="infoArtist">—</span></div>
+          <div class="spec-item">
+            <span class="spec-label">Investigador</span>
+            <span class="spec-val" id="infoAuthor">—</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Diseño Experimental</span>
+            <span class="spec-val" id="infoExperiment">—</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Contexto / Institución</span>
+            <span class="spec-val" id="infoContext">—</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Concepto Central</span>
+            <span class="spec-val" id="infoConcept">—</span>
+          </div>
         </div>
-        <div class="info-nav">
-          <button class="info-nav-btn" id="infoPrevBtn">◀ Anterior</button>
-          <button class="info-nav-btn" id="infoNextBtn">Siguiente ▶</button>
+      </div>
+
+      <!-- Columna Derecha -->
+      <div class="info-right-col">
+        <div class="info-header">
+          <div class="info-badge" id="infoBadge">SECCIÓN 1</div>
+          <h1 class="info-title" id="infoTitle">Título de la Diapositiva</h1>
         </div>
-        <button class="btn-return-gallery" id="btnReturn"><span>← Volver a la Sala</span></button>
+
+        <div class="info-content-card" id="infoMainPoints">
+          <!-- Puntos estructurados -->
+        </div>
+
+        <div class="analysis-card">
+          <div class="analysis-card-title" id="analysisLabel">💡 Análisis Fundamental:</div>
+          <div class="analysis-card-body" id="infoAnalysisText">Texto analítico</div>
+        </div>
+
+        <div class="info-bottom-bar">
+          <div class="info-nav-group">
+            <button class="info-btn-action" id="infoPrevBtn">◀ Cuadro Anterior</button>
+            <button class="info-btn-action" id="infoNextBtn">Siguiente Cuadro ▶</button>
+          </div>
+          <button class="info-btn-action btn-return-gallery" id="btnReturn">👁 Volver a la Sala</button>
+        </div>
       </div>
     </div>
   </div>
@@ -521,99 +611,193 @@
   <!-- ===== SCRIPT 3D ===== -->
   <script type="module">
     import * as THREE from 'three';
-    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-    // ---------- CONFIGURACIÓN ----------
     const TOTAL_DAYS = 366;
-    const UNIQUE_IMAGES = 8;
+    const CORE_SLIDES = 8;
     const GALLERY_RADIUS = 100;
-    const FRAME_W = 1.25;
-    const FRAME_H = 1.72;
+    const FRAME_W = 1.35;
+    const FRAME_H = 1.85;
     const FRAME_D = 0.06;
     const WALL_HEIGHT = 7.0;
     const PAINTING_Y = 1.50;
     const CAMERA_Y = 1.50;
     const CAM_DIST = 3.25;
 
-    // ---------- CONTENIDO DE LA PONENCIA ----------
+    // CONTENIDO ACADÉMICO LIMPIO Y PROFESIONAL
     const THEMES = [
       {
-        title: 'Conformidad (Asch)',
-        desc: 'Solomon Asch demostró que la presión de un grupo puede hacer que una persona ignore la evidencia de sus propios sentidos. En su experimento, el 75% de los sujetos cedió al menos una vez ante una mayoría que daba respuestas incorrectas.',
-        experiment: 'Asch (1951, 1955, 1956)',
-        author: 'Solomon Asch',
-        context: 'Percepción visual / Juicio de líneas',
-        concept: 'Conformidad — sumisión pública'
+        badge: 'CONTEXTO Y AUTOR',
+        title: '1. El Investigador y el Conflicto de Obediencia',
+        author: 'Stanley Milgram (1933–1984)',
+        experiment: 'Estudio conductual de la obediencia (1963 / 1974)',
+        context: 'Universidad de Yale / Posguerra y Juicio a Adolf Eichmann',
+        concept: 'Obediencia a la Autoridad Legítima',
+        imgUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=900&q=80',
+        points: `
+          <strong>Planteamiento del problema:</strong><br/>
+          ¿Las conductas destructivas en conflictos bélicos son producto de patologías sádicas o de la sumisión de personas comunes ante órdenes legítimas?<br/>
+          <ul>
+            <li><strong>Perfil del autor:</strong> Psicólogo social estadounidense formado en Harvard y catedrático en la Universidad de Yale.</li>
+            <li><strong>Motivación histórica:</strong> Analizar los argumentos de los oficiales juzgados en Núremberg y Jerusalén que justificaban sus actos bajo el principio de <em>«obediencia debida»</em>.</li>
+            <li><strong>Objetivo:</strong> Evaluar experimentalmente la disposición de un individuo para infligir sufrimiento a un semejante por orden directa de una autoridad.</li>
+          </ul>
+        `,
+        analysis: 'La investigación no reclutó criminales ni perfiles clínicos, sino una muestra diversa de 40 ciudadanos corrientes (empleados, docentes, obreros) para estudiar la conducta humana en condiciones de presión institucional.'
       },
       {
-        title: 'Resultados de Asch',
-        desc: 'En solitario los errores eran menores al 5%, pero con presión de grupo la conformidad subió al 33%. Bastaba un solo aliado que rompiera la unanimidad para que la conformidad cayera drásticamente.',
-        experiment: 'Asch (1951)',
-        author: 'Solomon Asch',
-        context: 'Laboratorio de psicología social',
-        concept: 'Unanimidad y aliado social'
+        badge: 'PARADIGMA PRECURSOR',
+        title: '2. El Paradigma de Conformidad de Solomon Asch',
+        author: 'Solomon Asch (1951, 1955, 1956)',
+        experiment: 'Juicio visual de longitud de líneas en grupo',
+        context: 'Laboratorio de interacción con cómplices unánimes',
+        concept: 'Conformidad e Influencia Normativa',
+        imgUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80',
+        points: `
+          <strong>El diseño de las líneas:</strong> Se pedía a un sujeto ingenuo comparar una línea patrón con tres opciones ante un grupo de 7 a 9 cómplices.<br/>
+          <ul>
+            <li><strong>Condición individual (control):</strong> Los errores fueron inferiores al <strong>5%</strong>.</li>
+            <li><strong>Presión de grupo unánime:</strong> Los cómplices emitieron juicios erróneos de forma unánime en 12 de 18 ensayos.</li>
+            <li><strong>Hallazgo:</strong> El <strong>75%</strong> de los participantes cedió al menos una vez al juicio errado de la mayoría, con una tasa promedio de sumisión del <strong>33%</strong>.</li>
+            <li><strong>Efecto del aliado:</strong> La presencia de un solo cómplice disidente redujo la conformidad a niveles mínimos.</li>
+          </ul>
+        `,
+        analysis: '<strong>Distinción conceptual:</strong> La <em>conformidad</em> opera entre pares con el mismo estatus social (influencia horizontal); la <em>obediencia</em> opera ante una figura de estatus superior dotada de autoridad jerárquica (influencia vertical).'
       },
       {
-        title: 'Obediencia (Milgram)',
-        desc: 'Stanley Milgram investigó hasta dónde obedece una persona a una autoridad. El 65% de los sujetos aplicó descargas de 450 voltios a una víctima inocente porque un experimentador con bata blanca se lo ordenaba.',
-        experiment: 'Milgram (1963, 1974)',
+        badge: 'METODOLOGÍA EXPERIMENTAL',
+        title: '3. Diseño y Montaje del Experimento de Milgram',
+        author: 'Stanley Milgram / Universidad de Yale',
+        experiment: 'Dispositivo generador de descargas de 15V a 450V',
+        context: 'Laboratorio de interacción y castigo simulado',
+        concept: 'Estructura Triádica: Autoridad, Profesor y Alumno',
+        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=900&q=80',
+        points: `
+          <strong>Estructura del procedimiento:</strong><br/>
+          Los participantes asistieron bajo la premisa de un <em>«estudio sobre memoria y aprendizaje»</em>.<br/>
+          <ul>
+            <li><strong>Distribución de roles:</strong> Mediante un sorteo trucado, el participante real siempre asumía el rol de <strong>«Profesor»</strong> (quien aplica el castigo) y el cómplice del laboratorio era el <strong>«Alumno»</strong>.</li>
+            <li><strong>La víctima:</strong> Sujeto atado a una silla con electrodos en una habitación contigua.</li>
+            <li><strong>El Generador:</strong> Panel con 30 interruptores desde <strong>15 hasta 450 Voltios</strong>, marcados con etiquetas progresivas desde <em>«Descarga ligera»</em> hasta <em>«Peligro: descarga severa»</em> y <em>«XXX»</em>.</li>
+          </ul>
+        `,
+        analysis: 'Para garantizar la credibilidad total del montaje, cada sujeto recibía una descarga real de prueba de 45 voltios antes de iniciar el procedimiento.'
+      },
+      {
+        badge: 'PROCEDIMIENTO Y PRESIÓN',
+        title: '4. Dinámica de Presión: Las Cuatro Órdenes Graduadas',
         author: 'Stanley Milgram',
-        context: 'Castigo y aprendizaje',
-        concept: 'Obediencia a la autoridad'
+        experiment: 'Protocolo secuencial de coerción técnica',
+        context: 'Interacción directa experimentador-profesor',
+        concept: 'Gradualismo y Presión Verbal Estandarizada',
+        imgUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80',
+        points: `
+          <strong>Secuencia de respuestas del alumno (grabadas):</strong><br/>
+          <ul>
+            <li><strong>75V a 120V:</strong> Quejas audibles y expresiones de dolor.</li>
+            <li><strong>150V:</strong> Exige detener la prueba y alude afecciones cardíacas.</li>
+            <li><strong>300V a 315V:</strong> Gritos desesperados seguidos de silencio absoluto (simulación de inconsciencia).</li>
+          </ul>
+          <strong>Las 4 órdenes fijas ante la vacilación del profesor:</strong><br/>
+          1. <em>«Continúe, por favor»</em>.<br/>
+          2. <em>«El experimento requiere que usted continúe»</em>.<br/>
+          3. <em>«Es absolutamente indispensable que continúe»</em>.<br/>
+          4. <em>«No tiene otra opción; debe continuar»</em>.
+        `,
+        analysis: 'El diseño impedía la negociación: si el sujeto insistía en detenerse tras la cuarta orden, la sesión finalizaba considerándolo desobediente.'
       },
       {
-        title: 'Resultados de Milgram',
-        desc: 'La obediencia cayó del 65% (víctima en otra habitación) al 30% cuando el sujeto debía forzar físicamente la mano de la víctima. Cuando dos compañeros se rebelaban, solo el 10% siguió obedeciendo.',
-        experiment: 'Milgram (1974)',
-        author: 'Stanley Milgram',
-        context: 'Proximidad de la víctima y grupo',
-        concept: 'Factores situacionales'
+        badge: 'RESULTADOS EMPÍRICOS',
+        title: '5. Resultados Cuantitativos del Experimento',
+        author: 'Stanley Milgram (Muestra original n=40)',
+        experiment: 'Medición de voltaje alcanzado y tasas de sumisión',
+        context: 'Condición estándar y variantes experimentales',
+        concept: 'Evidencia Cuantitativa de la Sumisión',
+        imgUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80',
+        points: `
+          <strong>Datos de la Condición Estándar:</strong><br/>
+          <ul>
+            <li><strong>65% de los participantes (26 de 40):</strong> Administró la descarga máxima de <strong>450 voltios</strong>.</li>
+            <li><strong>100% de los sujetos:</strong> Continuó aplicando descargas hasta alcanzar al menos los <strong>300 voltios</strong>.</li>
+          </ul>
+          <strong>Factores Situacionales Determinantes:</strong><br/>
+          <ul>
+            <li><strong>Proximidad física con la víctima:</strong> Al forzar físicamente la mano de la víctima sobre la placa metálica, la obediencia cayó al <strong>30%</strong>.</li>
+            <li><strong>Presencia de la autoridad:</strong> Órdenes impartidas por teléfono redujeron la obediencia al <strong>21%</strong>.</li>
+            <li><strong>Rebelión de pares:</strong> En presencia de dos cómplices que se negaban a seguir, la obediencia se desplomó al <strong>10%</strong>.</li>
+          </ul>
+        `,
+        analysis: 'Antes del estudio, psiquiatras consultados estimaron que solo el 1% (individuos sádicos) llegaría a 450V. Los resultados empíricos refutaron radicalmente esa predicción.'
       },
       {
-        title: 'Interpretación de Milgram',
-        desc: 'Milgram propuso el concepto de "estado de agente": la persona deja de sentirse responsable de sus actos y transfiere esa responsabilidad a la autoridad. La obediencia destructiva no es cuestión de personalidad, sino de estructura social.',
-        experiment: 'Milgram (1974)',
-        author: 'Stanley Milgram',
-        context: 'Autonomía vs. estado de agente',
-        concept: 'Responsabilidad delegada'
+        badge: 'INTERPRETACIÓN PSICOSOCIAL',
+        title: '6. Resultado Objetivo vs. Interpretación Psicológica',
+        author: 'Levine & Pavelchak / Psicología Social',
+        experiment: 'Análisis de la tensión interna y la fuerza situacional',
+        context: 'Diferenciación entre conducta manifiesta y proceso cognitivo',
+        concept: 'Fuerza Situacional y Error Fundamental de Atribución',
+        imgUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=900&q=80',
+        points: `
+          <strong>Distinción analítica central:</strong><br/>
+          <ul>
+            <li><strong>El Resultado Objetivo (Dato):</strong> Dos terceras partes de los sujetos presionaron interruptores hasta el nivel máximo potencialmente mortal.</li>
+            <li><strong>Lo que NO significa:</strong> No demuestra maldad innata ni sadismo. Los participantes experimentaron angustia extrema, temblores corporales, sudoración y crisis nerviosas durante la prueba.</li>
+            <li><strong>La Interpretación Psicológica:</strong> 
+              1. <em>La fuerza de la situación supera a las disposiciones de personalidad.</em><br/>
+              2. <em>Error Fundamental de Atribución:</em> La tendencia a juzgar la conducta mediante explicaciones morales internas, subestimando la presión estructural e institucional.
+            </li>
+          </ul>
+        `,
+        analysis: 'La psicología social concluye que la sumisión no proviene del deseo de hacer daño, sino de la incapacidad del individuo para romper con la definición de la realidad impuesta por la autoridad.'
       },
       {
-        title: 'Conformidad vs. Obediencia',
-        desc: 'La conformidad viene de pares (mismo estatus); la obediencia, de una autoridad (estatus superior). El conformista se parece al grupo; el obediente hace lo que nunca habría elegido por sí mismo.',
-        experiment: 'Levine & Pavelchak',
-        author: 'Levine y Pavelchak',
-        context: 'Psicología social clásica',
-        concept: 'Distinción conceptual'
+        badge: 'EXPLICACIÓN TEÓRICA',
+        title: '7. Modelo Teórico: El Estado Agéntico',
+        author: 'Stanley Milgram (1974)',
+        experiment: 'Mecanismos de transferencia de responsabilidad',
+        context: 'Estructuras jerárquicas y división del trabajo',
+        concept: 'Estado de Autonomía vs. Estado Agéntico',
+        imgUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80',
+        points: `
+          <strong>Dos estados psicológicos en la interacción social:</strong><br/>
+          <ul>
+            <li><strong>1. Estado de Autonomía:</strong> El individuo se percibe como autor y responsable directo de sus acciones, guiándose por su propio sistema de valores morales.</li>
+            <li><strong>2. Estado Agéntico (Agentic State):</strong> El individuo se considera un instrumento ejecutor que cumple la voluntad de una autoridad legítima, transfiriendo la responsabilidad ética hacia la cúspide jerárquica.</li>
+          </ul>
+          <strong>Factores que consolidan el estado agéntico:</strong><br/>
+          * <strong>Compromiso secuencial:</strong> El incremento gradual de voltaje dificulta identificar el punto de inflexión ético.<br/>
+          * <strong>Socialización previa:</strong> Aprendizaje temprano de sumisión a figuras legítimas (familia, escuela, organizaciones laborales).
+        `,
+        analysis: 'Al ingresar al estado agéntico, la preocupación del sujeto se desplaza de la moralidad del acto hacia la calidad técnica con la que ejecuta las órdenes recibidas.'
       },
       {
-        title: 'El algoritmo como autoridad',
-        desc: 'La bata blanca de Milgram ya no está en Yale: vive en los algoritmos que nos dicen qué opinión es correcta, qué video merece la pena y qué consenso es "verdadero". El algoritmo es autoridad a distancia máxima, y aun así influye.',
-        experiment: 'Aplicación contemporánea (aporte propio)',
-        author: 'Yenny Peña',
-        context: 'Redes sociales y consenso digital',
-        concept: 'Ciber-obediencia'
-      },
-      {
-        title: 'Moscovici y la minoría activa',
-        desc: 'Serge Moscovici plantea que la conformidad no es la única salida. La innovación —movimiento del grupo hacia una minoría consistente— es posible. Tarde: "el error es no creer en la inverosimilitud".',
-        experiment: 'Doms & Moscovici (1976)',
-        author: 'Serge Moscovici / Gabriel Tarde',
-        context: 'Influencia de minorías',
-        concept: 'Innovación y disidencia'
+        badge: 'SÍNTESIS Y APLICACIÓN',
+        title: '8. Conclusiones y la Influencia en la Era Digital',
+        author: 'Psicología Social Contemporánea',
+        experiment: 'De los laboratorios de Yale al consenso algorítmico',
+        context: 'Redes sociales, cámaras de eco y minorías activas',
+        concept: 'Ciber-obediencia e Innovación Social (Moscovici)',
+        imgUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=900&q=80',
+        points: `
+          <strong>Aportes e implicaciones actuales:</strong><br/>
+          <ul>
+            <li><strong>Transformación ética:</strong> Creación de comités de bioética y obligatoriedad del consentimiento informado estricto en la investigación psicológica.</li>
+            <li><strong>La Bata Blanca Digital:</strong> En la actualidad, la autoridad se ejerce mediante algoritmos de recomendación que configuran marcos de referencia, consensos artificiales y validación social sin necesidad de presencia física.</li>
+            <li><strong>Perspectiva de Moscovici:</strong> La conformidad no es el único desenlace; las <em>minorías activas y consistentes</em> representan el motor de la <strong>innovación social</strong> y la ruptura de la sumisión acrítica.</li>
+          </ul>
+        `,
+        analysis: 'El estudio de la conformidad y la obediencia no busca justificar la sumisión humana, sino proporcionar herramientas críticas para preservar el juicio autónomo frente a presiones grupales y tecnológicas.'
       }
     ];
 
-    // Elemento del título flotante
     const floatingArtTitle = document.getElementById('floating-art-title');
+    const quickDots = document.getElementById('quick-dots');
+    const dotBtns = document.querySelectorAll('.dot-btn');
 
-    // ---------- TEXTURAS Y GENERACIÓN DE OBRAS ----------
+    // GENERACIÓN DE TEXTURAS DE LOS CUADROS
     function createDropShadowTexture() {
       const cv = document.createElement('canvas');
-      cv.width = 512;
-      cv.height = 512;
+      cv.width = 512; cv.height = 512;
       const ctx = cv.getContext('2d');
       const grad = ctx.createRadialGradient(256, 280, 20, 256, 280, 230);
       grad.addColorStop(0, 'rgba(0, 0, 0, 0.95)');
@@ -627,8 +811,7 @@
 
     function createSpotlightTexture() {
       const cv = document.createElement('canvas');
-      cv.width = 512;
-      cv.height = 512;
+      cv.width = 512; cv.height = 512;
       const ctx = cv.getContext('2d');
       const grad = ctx.createRadialGradient(256, 180, 10, 256, 220, 230);
       grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
@@ -640,157 +823,94 @@
       return new THREE.CanvasTexture(cv);
     }
 
-    function createStudioFloorTexture() {
+    function createPosterTexture(index) {
       const cv = document.createElement('canvas');
-      cv.width = 1024;
-      cv.height = 1024;
+      cv.width = 600; cv.height = 840;
       const ctx = cv.getContext('2d');
-      ctx.fillStyle = '#7a808a';
-      ctx.fillRect(0, 0, 1024, 1024);
-      for (let i = 0; i < 400; i++) {
-        const x = Math.random() * 1024;
-        const y = Math.random() * 1024;
-        const r = 20 + Math.random() * 60;
-        const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
-        grad.addColorStop(0, `rgba(255,255,255,${0.02 + Math.random() * 0.02})`);
-        grad.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = grad;
-        ctx.fillRect(x - r, y - r, r * 2, r * 2);
+
+      const isCore = index < CORE_SLIDES;
+      const theme = isCore ? THEMES[index] : null;
+
+      const bgGrad = ctx.createLinearGradient(0, 0, 600, 840);
+      if (isCore) {
+        bgGrad.addColorStop(0, '#191e26');
+        bgGrad.addColorStop(1, '#0e1116');
+      } else {
+        bgGrad.addColorStop(0, '#dad5cb');
+        bgGrad.addColorStop(1, '#bebaa9');
       }
-      const texture = new THREE.CanvasTexture(cv);
-      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.set(10, 10);
-      texture.colorSpace = THREE.SRGBColorSpace;
-      return texture;
-    }
-
-    function createStudioWallTexture() {
-      const cv = document.createElement('canvas');
-      cv.width = 1024;
-      cv.height = 1024;
-      const ctx = cv.getContext('2d');
-      ctx.fillStyle = '#6e747e';
-      ctx.fillRect(0, 0, 1024, 1024);
-      for (let i = 0; i < 300; i++) {
-        const x = Math.random() * 1024;
-        const y = Math.random() * 1024;
-        const s = 10 + Math.random() * 30;
-        ctx.fillStyle = `rgba(255,255,255,${0.015 + Math.random() * 0.02})`;
-        ctx.fillRect(x, y, s, s);
-      }
-      const texture = new THREE.CanvasTexture(cv);
-      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.set(16, 2);
-      texture.colorSpace = THREE.SRGBColorSpace;
-      return texture;
-    }
-
-    const textureCache = [];
-    const imageSources = [];
-
-    function createArtArtworkTexture(index) {
-      const cv = document.createElement('canvas');
-      cv.width = 600;
-      cv.height = 840;
-      const ctx = cv.getContext('2d');
-
-      ctx.fillStyle = '#eae5db';
+      ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, 600, 840);
 
-      ctx.fillStyle = '#0f0f0f';
-      ctx.strokeStyle = '#0f0f0f';
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+      ctx.strokeStyle = isCore ? '#e2b144' : '#888888';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(25, 25, 550, 790);
 
-      const imgNum = ((index - 1) % UNIQUE_IMAGES) + 1;
+      if (isCore) {
+        ctx.fillStyle = '#e2b144';
+        ctx.font = 'bold 22px "Space Grotesk", sans-serif';
+        ctx.fillText(`CUADRO ${index + 1} DE 8`, 50, 75);
 
-      if (imgNum === 1) {
-        ctx.lineWidth = 45;
-        ctx.beginPath();
-        ctx.arc(300, 420, 195, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.lineWidth = 30;
-        ctx.beginPath();
-        ctx.arc(300, 420, 115, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(300, 420, 38, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#cba338';
-        ctx.lineWidth = 28;
-        ctx.beginPath();
-        ctx.moveTo(300, 130);
-        ctx.lineTo(325, 410);
-        ctx.lineTo(260, 680);
-        ctx.stroke();
-      } else if (imgNum === 2) {
-        ctx.lineWidth = 60;
-        ctx.beginPath();
-        ctx.moveTo(170, 150);
-        ctx.bezierCurveTo(460, 240, 110, 510, 430, 690);
-        ctx.stroke();
-        ctx.lineWidth = 26;
-        ctx.beginPath();
-        ctx.moveTo(430, 170);
-        ctx.lineTo(230, 650);
-        ctx.stroke();
-      } else if (imgNum === 3) {
-        ctx.lineWidth = 46;
-        ctx.beginPath();
-        ctx.moveTo(180, 110);
-        ctx.bezierCurveTo(140, 340, 230, 490, 190, 730);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(350, 110);
-        ctx.bezierCurveTo(400, 290, 320, 540, 370, 730);
-        ctx.stroke();
-      } else if (imgNum === 4) {
-        ctx.lineWidth = 55;
-        ctx.beginPath();
-        ctx.moveTo(150, 150);
-        ctx.lineTo(450, 690);
-        ctx.moveTo(450, 150);
-        ctx.lineTo(150, 690);
-        ctx.moveTo(300, 110);
-        ctx.lineTo(300, 730);
-        ctx.stroke();
-      } else if (imgNum === 5) {
-        ctx.lineWidth = 58;
-        ctx.beginPath();
-        ctx.moveTo(190, 150);
-        ctx.lineTo(190, 510);
-        ctx.arcTo(190, 690, 410, 690, 110);
-        ctx.lineTo(410, 150);
-        ctx.stroke();
-      } else if (imgNum === 6) {
-        ctx.lineWidth = 42;
-        ctx.beginPath();
-        ctx.arc(300, 290, 105, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(300, 550, 125, 0, Math.PI * 2);
-        ctx.stroke();
-      } else if (imgNum === 7) {
-        ctx.lineWidth = 65;
-        ctx.beginPath();
-        ctx.arc(300, 420, 180, 0.2, Math.PI * 1.95);
-        ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 34px "Plus Jakarta Sans", sans-serif';
+        const words = theme.title.split(' ');
+        let line = '';
+        let y = 130;
+        for (let n = 0; n < words.length; n++) {
+          const testLine = line + words[n] + ' ';
+          if (ctx.measureText(testLine).width > 480 && n > 0) {
+            ctx.fillText(line, 50, y);
+            line = words[n] + ' ';
+            y += 42;
+          } else {
+            line = testLine;
+          }
+        }
+        ctx.fillText(line, 50, y);
+
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.12)';
+        ctx.fillRect(50, y + 30, 500, 360);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(50, y + 30, 500, 360);
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText('PARADIGMA EXPERIMENTAL', 70, y + 70);
+
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '18px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText(`Autor: ${theme.author}`, 70, y + 120);
+        ctx.fillText(`Concepto: ${theme.concept}`, 70, y + 160);
+
+        if (index === 4) {
+          ctx.fillStyle = '#ef4444';
+          ctx.font = 'bold 90px "Space Grotesk", sans-serif';
+          ctx.fillText('65%', 190, y + 270);
+          ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
+          ctx.fillText('Llegó a la descarga máxima de 450V', 100, y + 320);
+        } else if (index === 1) {
+          ctx.fillStyle = '#38bdf8';
+          ctx.font = 'bold 90px "Space Grotesk", sans-serif';
+          ctx.fillText('75%', 190, y + 270);
+          ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
+          ctx.fillText('Cedió al error grupal al menos 1 vez', 90, y + 320);
+        } else {
+          ctx.fillStyle = '#f8fafc';
+          ctx.font = 'italic 19px "Plus Jakarta Sans", sans-serif';
+          ctx.fillText('Clic para abrir detalles del cuadro', 130, y + 270);
+        }
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '16px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText('Psicología Social · Galería Académica', 50, 780);
       } else {
-        ctx.lineWidth = 48;
-        ctx.beginPath();
-        ctx.moveTo(300, 110);
-        ctx.bezierCurveTo(110, 290, 490, 530, 300, 730);
-        ctx.stroke();
-      }
-
-      ctx.fillStyle = '#d4af37';
-      for (let s = 0; s < 40; s++) {
-        const sx = 90 + Math.random() * 420;
-        const sy = 110 + Math.random() * 620;
-        const sr = 1.5 + Math.random() * 4.5;
-        ctx.beginPath();
-        ctx.arc(sx, sy, sr, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = '#222';
+        ctx.font = 'bold 26px "Space Grotesk", sans-serif';
+        ctx.fillText(`GALERÍA DE EXHIBICIÓN`, 60, 100);
+        ctx.fillStyle = '#555';
+        ctx.font = '18px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText(`Marco #${index + 1} — Ambiente 3D`, 60, 140);
       }
 
       const tex = new THREE.CanvasTexture(cv);
@@ -799,82 +919,23 @@
       return tex;
     }
 
-    function loadArtworkTexture(imgNum) {
-      const tex = createArtArtworkTexture(imgNum);
-      const cv = tex.image;
-      const exts = ['png', 'jpg', 'jpeg', 'webp'];
-      let attempt = 0;
-
-      function tryLoad() {
-        if (attempt >= exts.length) {
-          imageSources[imgNum] = '';
-          return;
-        }
-        const filename = `imagen${imgNum}.${exts[attempt]}`;
-        const img = new Image();
-        img.onload = () => {
-          const ctx = cv.getContext('2d');
-          ctx.clearRect(0, 0, cv.width, cv.height);
-          ctx.drawImage(img, 0, 0, cv.width, cv.height);
-          tex.needsUpdate = true;
-          imageSources[imgNum] = filename;
-        };
-        img.onerror = () => {
-          attempt++;
-          tryLoad();
-        };
-        img.src = filename;
-      }
-      tryLoad();
-      return tex;
+    const textureCache = [];
+    for (let i = 0; i < TOTAL_DAYS; i++) {
+      textureCache[i] = createPosterTexture(i);
     }
 
-    for (let i = 1; i <= UNIQUE_IMAGES; i++) {
-      textureCache[i] = loadArtworkTexture(i);
-      imageSources[i] = '';
-    }
-
-    window.addEventListener('dragover', e => e.preventDefault());
-    window.addEventListener('drop', e => {
-      e.preventDefault();
-      const files = Array.from(e.dataTransfer.files);
-      files.forEach(file => {
-        const match = file.name.match(/\d+/);
-        if (match) {
-          const num = ((parseInt(match[0], 10) - 1) % UNIQUE_IMAGES) + 1;
-          const url = URL.createObjectURL(file);
-          const img = new Image();
-          img.onload = () => {
-            const tex = textureCache[num];
-            const cv = tex.image;
-            const ctx = cv.getContext('2d');
-            ctx.clearRect(0, 0, cv.width, cv.height);
-            ctx.drawImage(img, 0, 0, cv.width, cv.height);
-            tex.needsUpdate = true;
-            imageSources[num] = url;
-          };
-          img.src = url;
-        }
-      });
-    });
-
-    // ---------- RENDERER Y ESCENA ----------
+    // RENDERER Y ESCENA
     const canvas = document.getElementById('webgl-canvas');
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      powerPreference: "high-performance"
-    });
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
+    renderer.toneMappingExposure = 1.05;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const scene = new THREE.Scene();
-    const studioColor = new THREE.Color(0x6e747e);
-    scene.background = studioColor;
-    scene.fog = new THREE.Fog(0x6e747e, 14, 65);
+    scene.background = new THREE.Color(0x4f5561);
+    scene.fog = new THREE.Fog(0x4f5561, 12, 60);
 
     const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 200);
 
@@ -883,100 +944,49 @@
     scene.environment = envTexture;
     pmremGenerator.dispose();
 
-    const ambLight = new THREE.AmbientLight(0xffffff, 0.6);
+    const ambLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambLight);
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
     dirLight.position.set(0, 20, 0);
     scene.add(dirLight);
 
     const floorGeo = new THREE.PlaneGeometry((GALLERY_RADIUS + 20) * 2, (GALLERY_RADIUS + 20) * 2);
-    const floorMat = new THREE.MeshStandardMaterial({
-      map: createStudioFloorTexture(),
-      roughness: 0.35,
-      metalness: 0.1,
-      envMap: envTexture,
-      envMapIntensity: 0.3
-    });
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x5a606d, roughness: 0.4, metalness: 0.1 });
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
     floorMesh.rotation.x = -Math.PI / 2;
-    floorMesh.position.y = 0;
     scene.add(floorMesh);
 
     const wallGeo = new THREE.CylinderGeometry(GALLERY_RADIUS, GALLERY_RADIUS, WALL_HEIGHT, 128, 1, true);
-    const wallMat = new THREE.MeshStandardMaterial({
-      map: createStudioWallTexture(),
-      roughness: 0.85,
-      metalness: 0.0,
-      side: THREE.BackSide
-    });
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0x484e5a, roughness: 0.8, side: THREE.BackSide });
     const wallMesh = new THREE.Mesh(wallGeo, wallMat);
     wallMesh.position.y = WALL_HEIGHT / 2;
     scene.add(wallMesh);
 
-    const railRadius = GALLERY_RADIUS - 0.7;
-    const railGeo = new THREE.TorusGeometry(railRadius, 0.018, 6, 128);
+    const railGeo = new THREE.TorusGeometry(GALLERY_RADIUS - 0.7, 0.018, 6, 128);
     const railMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
     const railMesh = new THREE.Mesh(railGeo, railMat);
     railMesh.rotation.x = Math.PI / 2;
     railMesh.position.y = WALL_HEIGHT - 0.25;
     scene.add(railMesh);
 
-    const spotFixtureGeo = new THREE.CylinderGeometry(0.035, 0.05, 0.16, 8);
-    const spotFixtureMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8, roughness: 0.3 });
-    const instancedSpots = new THREE.InstancedMesh(spotFixtureGeo, spotFixtureMat, TOTAL_DAYS);
-    const dummy = new THREE.Object3D();
-    for (let i = 0; i < TOTAL_DAYS; i++) {
-      const angle = (i / TOTAL_DAYS) * Math.PI * 2;
-      const x = Math.sin(angle) * railRadius;
-      const z = Math.cos(angle) * railRadius;
-      dummy.position.set(x, WALL_HEIGHT - 0.35, z);
-      dummy.rotation.y = angle + Math.PI;
-      dummy.rotation.x = 0.42;
-      dummy.updateMatrix();
-      instancedSpots.setMatrixAt(i, dummy.matrix);
-    }
-    instancedSpots.instanceMatrix.needsUpdate = true;
-    scene.add(instancedSpots);
-
-    // ---------- CUADROS ----------
+    // CUADROS
     const interactiveMeshes = [];
-
     const outerGeo = new THREE.BoxGeometry(FRAME_W, FRAME_H, FRAME_D);
-    const outerMat = new THREE.MeshStandardMaterial({
-      color: 0x050505,
-      roughness: 0.2,
-      metalness: 0.3,
-      envMap: envTexture,
-      envMapIntensity: 0.5
-    });
-
+    const outerMat = new THREE.MeshStandardMaterial({ color: 0x08090b, roughness: 0.2, metalness: 0.4 });
     const matGeo = new THREE.PlaneGeometry(FRAME_W - 0.04, FRAME_H - 0.04);
     const matMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-
     const canvasGeo = new THREE.PlaneGeometry(FRAME_W - 0.08, FRAME_H - 0.08);
 
     const dropShadowTex = createDropShadowTexture();
     const spotlightTex = createSpotlightTexture();
 
     const shadowGeo = new THREE.PlaneGeometry(FRAME_W * 1.6, FRAME_H * 1.55);
-    const shadowMat = new THREE.MeshBasicMaterial({
-      map: dropShadowTex,
-      transparent: true,
-      opacity: 0.9,
-      depthWrite: false
-    });
+    const shadowMat = new THREE.MeshBasicMaterial({ map: dropShadowTex, transparent: true, opacity: 0.9, depthWrite: false });
 
     const spotHaloGeo = new THREE.PlaneGeometry(FRAME_W * 2.2, FRAME_H * 1.8);
-    const spotHaloMat = new THREE.MeshBasicMaterial({
-      map: spotlightTex,
-      transparent: true,
-      opacity: 0.8,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false
-    });
+    const spotHaloMat = new THREE.MeshBasicMaterial({ map: spotlightTex, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
 
     for (let i = 0; i < TOTAL_DAYS; i++) {
-      const imgNum = (i % UNIQUE_IMAGES) + 1;
       const angle = Math.PI / 2 - (i / TOTAL_DAYS) * Math.PI * 2;
       const container = new THREE.Group();
 
@@ -1000,19 +1010,17 @@
       pp.position.z = FRAME_D / 2 + 0.001;
       container.add(pp);
 
-      const canvasMat = new THREE.MeshBasicMaterial({
-        map: textureCache[imgNum]
-      });
+      const canvasMat = new THREE.MeshBasicMaterial({ map: textureCache[i] });
       const canvasMesh = new THREE.Mesh(canvasGeo, canvasMat);
       canvasMesh.position.z = FRAME_D / 2 + 0.003;
-      canvasMesh.userData = { index: i, imgNum: imgNum };
+      canvasMesh.userData = { index: i };
       container.add(canvasMesh);
       interactiveMeshes.push(canvasMesh);
 
       scene.add(container);
     }
 
-    // ---------- CÁMARA Y NAVEGACIÓN ----------
+    // CÁMARA Y NAVEGACIÓN
     const finalCamPos = new THREE.Vector3(GALLERY_RADIUS - CAM_DIST, CAMERA_Y, 0);
     const finalLookAt = new THREE.Vector3(GALLERY_RADIUS, CAMERA_Y, 0);
 
@@ -1029,18 +1037,8 @@
     let startAnimationDone = false;
     const keys = { w: false, a: false, s: false, d: false };
 
-    // ---------- FLUJO: INTRO -> START -> SALA ----------
-    const introOverlay = document.getElementById('intro-overlay');
-    const startOverlay = document.getElementById('start-overlay');
-
     document.getElementById('intro-btn').addEventListener('click', () => {
-      introOverlay.classList.add('hidden');
-      startOverlay.classList.add('visible');
-    });
-
-    document.getElementById('start-btn').addEventListener('click', () => {
-      startOverlay.classList.add('hidden');
-      startOverlay.classList.remove('visible');
+      document.getElementById('intro-overlay').classList.add('hidden');
       camera.position.set(0, CAMERA_Y, 0);
       camera.lookAt(0, CAMERA_Y, 0);
 
@@ -1050,9 +1048,7 @@
         z: finalCamPos.z,
         duration: 2.2,
         ease: "power3.inOut",
-        onUpdate: () => {
-          camera.lookAt(finalLookAt);
-        },
+        onUpdate: () => { camera.lookAt(finalLookAt); },
         onComplete: () => {
           startAnimationDone = true;
           player.pos.copy(finalCamPos);
@@ -1065,6 +1061,7 @@
           camera.rotation.y = player.yaw;
           camera.rotation.x = player.pitch;
           floatingArtTitle.classList.add('visible');
+          quickDots.classList.add('visible');
         }
       });
     });
@@ -1086,14 +1083,12 @@
     });
 
     window.addEventListener('pointerdown', e => {
-      if (inInfoSpace || e.target.closest('.nav-arrow-hitbox') || e.target.closest('#info-space')) return;
+      if (inInfoSpace || e.target.closest('.nav-arrow-hitbox') || e.target.closest('#info-space') || e.target.closest('#quick-dots')) return;
       isDragging = true;
       startX = e.clientX;
       startY = e.clientY;
     });
     window.addEventListener('pointermove', e => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
       if (!isDragging || inInfoSpace || !startAnimationDone) return;
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
@@ -1114,115 +1109,81 @@
       e.stopPropagation();
       if (startAnimationDone) targetYaw -= stepAngle;
     });
-    window.addEventListener('wheel', e => {
-      if (startAnimationDone && !inInfoSpace) targetYaw -= e.deltaY * 0.0006;
-    }, { passive: true });
 
-    // ---------- MODAL ----------
+    // ACTUALIZACIÓN DEL MODAL
     const raycaster = new THREE.Raycaster();
     const mouseVec = new THREE.Vector2();
     const infoSpace = document.getElementById('info-space');
     const infoImg = document.getElementById('infoImg');
+    const infoBadge = document.getElementById('infoBadge');
     const infoTitle = document.getElementById('infoTitle');
-    const infoDate = document.getElementById('infoDate');
-    const infoDesc = document.getElementById('infoDesc');
-    const infoTechnique = document.getElementById('infoTechnique');
-    const infoDimensions = document.getElementById('infoDimensions');
-    const infoCollection = document.getElementById('infoCollection');
-    const infoArtist = document.getElementById('infoArtist');
+    const infoAuthor = document.getElementById('infoAuthor');
+    const infoExperiment = document.getElementById('infoExperiment');
+    const infoContext = document.getElementById('infoContext');
+    const infoConcept = document.getElementById('infoConcept');
+    const infoMainPoints = document.getElementById('infoMainPoints');
+    const infoAnalysisText = document.getElementById('infoAnalysisText');
 
-    const infoPrevBtn = document.getElementById('infoPrevBtn');
-    const infoNextBtn = document.getElementById('infoNextBtn');
+    // Respaldo de imagen automática si falla la carga
+    infoImg.onerror = function() {
+      this.src = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80';
+    };
 
     let currentIndex = 0;
 
-    function get2024DateString(dayIndex) {
-      const d = new Date(2024, 0, 1);
-      d.setDate(d.getDate() + dayIndex);
-      return `${d.getDate()} de ${d.toLocaleString('es-ES', { month: 'short' })}`;
+    function updateModalContent(index) {
+      currentIndex = index;
+      const isCore = index < CORE_SLIDES;
+      const theme = isCore ? THEMES[index] : null;
+
+      dotBtns.forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+
+      if (isCore) {
+        infoBadge.textContent = theme.badge;
+        infoTitle.textContent = theme.title;
+        infoAuthor.textContent = theme.author;
+        infoExperiment.textContent = theme.experiment;
+        infoContext.textContent = theme.context;
+        infoConcept.textContent = theme.concept;
+        infoMainPoints.innerHTML = theme.points;
+        infoAnalysisText.innerHTML = theme.analysis;
+        infoImg.src = theme.imgUrl;
+      } else {
+        infoBadge.textContent = `MARCO #${index + 1}`;
+        infoTitle.textContent = `Marco de la Galería #${index + 1}`;
+        infoAuthor.textContent = 'Yenny Peña';
+        infoExperiment.textContent = 'Galería de Psicología Social';
+        infoContext.textContent = 'Salas de Influencia y Cambio de Actitudes';
+        infoConcept.textContent = 'Espacio de Exhibición';
+        infoMainPoints.innerHTML = 'Este cuadro forma parte de la ambientación de la galería. Puedes navegar directamente a cualquiera de los <strong>8 cuadros temáticos</strong> mediante la barra inferior numerada del 1 al 8.';
+        infoAnalysisText.innerHTML = 'Selecciona del 1 al 8 para volver a los temas de la presentación.';
+        infoImg.src = 'https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&w=800&q=80';
+      }
     }
 
-    function updateModalWithIndex(index, animateCamera = true) {
-      const imgNum = (index % UNIQUE_IMAGES) + 1;
-      const dayNum = index + 1;
-      const themeIdx = (imgNum - 1) % UNIQUE_IMAGES;
-      const theme = THEMES[themeIdx];
-
-      infoImg.src = imageSources[imgNum] || '';
-      infoTitle.textContent = `Día ${dayNum} — ${theme.title}`;
-      infoDate.textContent = `${get2024DateString(index)} — Día ${dayNum} de ${TOTAL_DAYS}`;
-      infoDesc.textContent = theme.desc;
-      infoTechnique.textContent = theme.experiment;
-      infoDimensions.textContent = theme.author;
-      infoCollection.textContent = theme.context;
-      infoArtist.textContent = theme.concept;
+    function openInfoSpace(index) {
+      inInfoSpace = true;
+      document.body.classList.add('in-info-space');
+      updateModalContent(index);
 
       const targetMesh = interactiveMeshes[index];
       if (targetMesh) {
         const targetPos = new THREE.Vector3();
         targetMesh.getWorldPosition(targetPos);
         const camTargetPos = targetPos.clone().add(targetMesh.getWorldDirection(new THREE.Vector3()).multiplyScalar(2.1));
-        if (animateCamera) {
-          gsap.to(camera.position, {
-            x: camTargetPos.x,
-            y: camTargetPos.y,
-            z: camTargetPos.z,
-            duration: 0.7,
-            ease: "power2.inOut"
-          });
-        } else {
-          camera.position.copy(camTargetPos);
-        }
+        gsap.to(camera.position, {
+          x: camTargetPos.x,
+          y: camTargetPos.y,
+          z: camTargetPos.z,
+          duration: 0.8,
+          ease: "power2.inOut"
+        });
       }
-      currentIndex = index;
+
+      setTimeout(() => { infoSpace.classList.add('active'); }, 250);
     }
-
-    function openInfoSpace(index, targetMesh) {
-      if (inInfoSpace) return;
-      inInfoSpace = true;
-      document.body.classList.add('in-info-space');
-
-      updateModalWithIndex(index, false);
-
-      const targetPos = new THREE.Vector3();
-      targetMesh.getWorldPosition(targetPos);
-      const camTargetPos = targetPos.clone().add(targetMesh.getWorldDirection(new THREE.Vector3()).multiplyScalar(2.1));
-      gsap.to(camera.position, {
-        x: camTargetPos.x,
-        y: camTargetPos.y,
-        z: camTargetPos.z,
-        duration: 0.9,
-        ease: "power2.inOut"
-      });
-
-      setTimeout(() => { infoSpace.classList.add('active'); }, 400);
-    }
-
-    window.addEventListener('click', e => {
-      if (inInfoSpace || e.target.closest('.nav-arrow-hitbox') || isDragging || !startAnimationDone) return;
-      mouseVec.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouseVec.y = -(e.clientY / window.innerHeight) * 2 + 1;
-      raycaster.setFromCamera(mouseVec, camera);
-      const intersects = raycaster.intersectObjects(interactiveMeshes);
-      if (intersects.length > 0) {
-        const data = intersects[0].object.userData;
-        openInfoSpace(data.index, intersects[0].object);
-      }
-    });
-
-    infoPrevBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (!inInfoSpace) return;
-      const newIndex = (currentIndex - 1 + TOTAL_DAYS) % TOTAL_DAYS;
-      updateModalWithIndex(newIndex, true);
-    });
-
-    infoNextBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (!inInfoSpace) return;
-      const newIndex = (currentIndex + 1) % TOTAL_DAYS;
-      updateModalWithIndex(newIndex, true);
-    });
 
     function closeInfoSpace() {
       if (!inInfoSpace) return;
@@ -1232,48 +1193,49 @@
         x: player.pos.x,
         y: player.pos.y,
         z: player.pos.z,
-        duration: 0.8,
+        duration: 0.7,
         ease: "power3.out",
         onComplete: () => { inInfoSpace = false; }
       });
     }
+
+    window.addEventListener('click', e => {
+      if (inInfoSpace || e.target.closest('.nav-arrow-hitbox') || e.target.closest('#info-space') || e.target.closest('#quick-dots') || isDragging || !startAnimationDone) return;
+      mouseVec.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseVec.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouseVec, camera);
+      const intersects = raycaster.intersectObjects(interactiveMeshes);
+      if (intersects.length > 0) {
+        openInfoSpace(intersects[0].object.userData.index);
+      }
+    });
+
+    document.getElementById('infoPrevBtn').addEventListener('click', () => {
+      const prevIdx = (currentIndex - 1 + CORE_SLIDES) % CORE_SLIDES;
+      updateModalContent(prevIdx);
+    });
+    document.getElementById('infoNextBtn').addEventListener('click', () => {
+      const nextIdx = (currentIndex + 1) % CORE_SLIDES;
+      updateModalContent(nextIdx);
+    });
+
+    dotBtns.forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const idx = parseInt(btn.getAttribute('data-index'), 10);
+        openInfoSpace(idx);
+      });
+    });
+
     document.getElementById('btnCloseInfo').addEventListener('click', closeInfoSpace);
     document.getElementById('btnReturn').addEventListener('click', closeInfoSpace);
 
-    // ---------- CURSOR FLUIDO ----------
-    const cursor = document.getElementById('fluid-cursor');
-    let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-    let cursorX = mouseX, cursorY = mouseY;
-    const btnPrev = document.getElementById('btnPrev'), btnNext = document.getElementById('btnNext');
-    btnPrev.addEventListener('mouseenter', () => cursor.classList.add('bubble-mode'));
-    btnPrev.addEventListener('mouseleave', () => cursor.classList.remove('bubble-mode'));
-    btnNext.addEventListener('mouseenter', () => cursor.classList.add('bubble-mode'));
-    btnNext.addEventListener('mouseleave', () => cursor.classList.remove('bubble-mode'));
-
-    // ---------- POST-PROCESADO ----------
-    const composer = new EffectComposer(renderer);
-    const renderPass = new RenderPass(scene, camera);
-    composer.addPass(renderPass);
-
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth * 0.5, window.innerHeight * 0.5),
-      0.2,
-      0.3,
-      0.7
-    );
-    composer.addPass(bloomPass);
-
-    // ---------- BUCLE DE ANIMACIÓN ----------
+    // BUCLE DE ANIMACIÓN
     const clock = new THREE.Clock();
 
     function animate() {
       requestAnimationFrame(animate);
       const dt = clock.getDelta();
-
-      cursorX += (mouseX - cursorX) * 0.25;
-      cursorY += (mouseY - cursorY) * 0.25;
-      cursor.style.left = `${cursorX}px`;
-      cursor.style.top = `${cursorY}px`;
 
       if (startAnimationDone && !inInfoSpace) {
         player.yaw += (targetYaw - player.yaw) * 0.1;
@@ -1312,7 +1274,6 @@
         camera.rotation.y = player.yaw;
         camera.rotation.x = player.pitch;
 
-        // CÁLCULO DINÁMICO DEL TEMA FRENTE A LA CÁMARA
         const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
         const targetPointX = camera.position.x + forward.x * CAM_DIST;
         const targetPointZ = camera.position.z + forward.z * CAM_DIST;
@@ -1320,14 +1281,16 @@
         let norm = (Math.PI / 2 - theta) / (Math.PI * 2);
         norm = ((norm % 1) + 1) % 1;
         const currentActiveIndex = Math.round(norm * TOTAL_DAYS) % TOTAL_DAYS;
-        const activeTheme = THEMES[currentActiveIndex % THEMES.length];
-        
-        if (floatingArtTitle.textContent !== activeTheme.title) {
-          floatingArtTitle.textContent = activeTheme.title;
+
+        if (currentActiveIndex < CORE_SLIDES) {
+          floatingArtTitle.textContent = THEMES[currentActiveIndex].title;
+          dotBtns.forEach((b, i) => b.classList.toggle('active', i === currentActiveIndex));
+        } else {
+          floatingArtTitle.textContent = `Marco #${currentActiveIndex + 1}`;
         }
       }
 
-      composer.render();
+      renderer.render(scene, camera);
     }
     animate();
 
@@ -1335,14 +1298,7 @@
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-      composer.setSize(window.innerWidth, window.innerHeight);
-      bloomPass.resolution.set(window.innerWidth * 0.5, window.innerHeight * 0.5);
     });
-
-    if (!startAnimationDone) {
-      camera.position.set(0, CAMERA_Y, 0);
-      camera.lookAt(0, CAMERA_Y, 0);
-    }
   </script>
 </body>
 </html>
