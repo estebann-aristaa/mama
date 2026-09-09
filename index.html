@@ -552,7 +552,7 @@
     </div>
 
     <div class="info-container">
-      <!-- Columna Izquierda con la Foto/Imagen Real del Tema -->
+      <!-- Columna Izquierda: Fotografía Histórica de Internet -->
       <div class="info-left-col">
         <div class="info-artwork-box">
           <img class="info-artwork-img" id="infoImg" src="" alt="Fotografía histórica del experimento" />
@@ -620,23 +620,23 @@
     const CAMERA_Y = 1.50;
     const CAM_DIST = 3.25;
 
-    // FOTOGRAFÍAS HISTÓRICAS REALES DE PSICOLOGÍA SOCIAL (WIKIMEDIA COMMONS)
-    const ACADEMIC_IMAGES = [
-      // 1. Stanley Milgram (Foto histórica real 1954/1963)
+    // IMÁGENES DE INTERNET DIRECTAS PARA EL MODAL (FOTOS HISTÓRICAS)
+    const MODAL_WEB_IMAGES = [
+      // 1. Stanley Milgram (Foto histórica real)
       "https://upload.wikimedia.org/wikipedia/commons/d/da/Stanley_Milgram_1954.jpg",
-      // 2. Experimento de estimación de líneas de Solomon Asch (Tarjetas originales)
+      // 2. Solomon Asch (Tarjetas originales del experimento)
       "https://upload.wikimedia.org/wikipedia/commons/4/47/Asch_experiment.png",
-      // 3. Anuncio original de reclutamiento para el estudio en Yale (1961)
+      // 3. Anuncio original de periódico de New Haven / Yale (1961)
       "https://upload.wikimedia.org/wikipedia/commons/3/34/Milgram_Experiment_advertising.png",
-      // 4. Montaje técnico de la consola y habitaciones del experimento de Milgram
+      // 4. Esquema técnico de la consola y electrochoques
       "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Milgram_experiment_v2.svg/1024px-Milgram_experiment_v2.svg.png",
-      // 5. Gráfica de resultados empíricos (65% obediencia total)
+      // 5. Gráfica oficial de resultados empíricos (65% a 450V)
       "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Graph_of_Milgram-Experiment.svg/1024px-Graph_of_Milgram-Experiment.svg.png",
-      // 6. Adolf Eichmann en el juicio de Jerusalén (1961 - base histórica del dilema moral)
+      // 6. Adolf Eichmann en el juicio de 1961 (La fuerza de la situación vs sadismo)
       "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Adolf_Eichmann_at_Trial1961.jpg/800px-Adolf_Eichmann_at_Trial1961.jpg",
-      // 7. Portada histórica de «Obedience to Authority» de Milgram (1974 - Estado Agéntico)
+      // 7. Portada de «Obedience to Authority» de Milgram (1974 - Estado Agéntico)
       "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Obedience_to_Authority_by_Stanley_Milgram.jpg/600px-Obedience_to_Authority_by_Stanley_Milgram.jpg",
-      // 8. Serge Moscovici (Fotografía real del autor de las Minorías Activas)
+      // 8. Serge Moscovici (Foto real - Minorías Activas e Innovación)
       "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Serge_Moscovici.jpg/600px-Serge_Moscovici.jpg"
     ];
 
@@ -874,26 +874,57 @@
       return texture;
     }
 
-    // CARGA DE TEXTURAS DE LAS FOTOGRAFÍAS REALES
+    // CARGA EXCLUSIVA DE TUS IMÁGENES LOCALES (imagen1.png a imagen8.png) PARA LOS CUADROS DE LA PARED 3D
     const textureLoader = new THREE.TextureLoader();
     textureLoader.setCrossOrigin('anonymous');
 
     const textureCache = [];
-    const imageSources = [];
 
-    function loadArtworkTexture(imgNum) {
-      const url = ACADEMIC_IMAGES[imgNum - 1];
-      imageSources[imgNum] = url;
+    function loadWallTexture(imgNum) {
+      const exts = ['png', 'jpg', 'jpeg', 'webp'];
+      let attempt = 0;
 
-      const tex = textureLoader.load(url);
+      // Creamos la textura inicial con imagenX.png
+      const tex = textureLoader.load(`imagen${imgNum}.png`, undefined, undefined, () => {
+        tryNextExtension();
+      });
       tex.anisotropy = 8;
       tex.colorSpace = THREE.SRGBColorSpace;
+
+      function tryNextExtension() {
+        attempt++;
+        if (attempt < exts.length) {
+          textureLoader.load(`imagen${imgNum}.${exts[attempt]}`, (loadedTex) => {
+            tex.image = loadedTex.image;
+            tex.needsUpdate = true;
+          }, undefined, tryNextExtension);
+        }
+      }
+
       return tex;
     }
 
     for (let i = 1; i <= UNIQUE_IMAGES; i++) {
-      textureCache[i] = loadArtworkTexture(i);
+      textureCache[i] = loadWallTexture(i);
     }
+
+    // ARRASTRAR Y SOLTAR IMÁGENES EN CASO DE QUERER CAMBIAR ALGUNA
+    window.addEventListener('dragover', e => e.preventDefault());
+    window.addEventListener('drop', e => {
+      e.preventDefault();
+      const files = Array.from(e.dataTransfer.files);
+      files.forEach(file => {
+        const match = file.name.match(/\d+/);
+        if (match) {
+          const num = ((parseInt(match[0], 10) - 1) % UNIQUE_IMAGES) + 1;
+          const url = URL.createObjectURL(file);
+          textureLoader.load(url, (newTex) => {
+            textureCache[num].image = newTex.image;
+            textureCache[num].needsUpdate = true;
+          });
+        }
+      });
+    });
 
     // RENDERER Y ESCENA 3D
     const canvas = document.getElementById('webgl-canvas');
@@ -1101,7 +1132,7 @@
       if (startAnimationDone) targetYaw -= stepAngle;
     });
 
-    // ACTUALIZACIÓN DEL MODAL
+    // ACTUALIZACIÓN DEL MODAL (FOTOGRAFÍAS REALES DE GOOGLE / INTERNET)
     const raycaster = new THREE.Raycaster();
     const mouseVec = new THREE.Vector2();
     const infoSpace = document.getElementById('info-space');
@@ -1135,8 +1166,8 @@
       infoMainPoints.innerHTML = theme.points;
       infoAnalysisText.innerHTML = theme.analysis;
 
-      // Carga directa de la foto histórica real
-      infoImg.src = ACADEMIC_IMAGES[themeIdx];
+      // ADENTRO EN EL MODAL: FOTOGRAFÍAS HISTÓRICAS DE INTERNET
+      infoImg.src = MODAL_WEB_IMAGES[themeIdx];
     }
 
     function openInfoSpace(index) {
