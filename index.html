@@ -314,7 +314,8 @@
     .info-artwork-img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      background-color: #0c1017;
       display: block;
     }
     .info-specs-grid {
@@ -551,10 +552,10 @@
     </div>
 
     <div class="info-container">
-      <!-- Columna Izquierda con la Infografía del Tema -->
+      <!-- Columna Izquierda con la Foto/Imagen Real del Tema -->
       <div class="info-left-col">
         <div class="info-artwork-box">
-          <img class="info-artwork-img" id="infoImg" src="" alt="Ilustración del experimento" />
+          <img class="info-artwork-img" id="infoImg" src="" alt="Fotografía histórica del experimento" />
         </div>
         <div class="info-specs-grid">
           <div class="spec-item">
@@ -619,378 +620,25 @@
     const CAMERA_Y = 1.50;
     const CAM_DIST = 3.25;
 
-    // GENERADOR DE INFOGRAFÍAS VECTORIALES DE ALTA CALIDAD PARA CADA SECCIÓN ACADÉMICA
-    function getVectorIllustration(index) {
-      const svgs = [
-        // 1. Stanley Milgram y Contexto de Yale
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="100%" height="100%">
-          <rect width="800" height="1100" fill="#0d1117"/>
-          <rect x="25" y="25" width="750" height="1050" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3"/>
-          <rect x="50" y="55" width="700" height="50" rx="8" fill="#21262d"/>
-          <text x="75" y="87" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="700" fill="#f59e0b" letter-spacing="3">SECCIÓN 01 · CONTEXTO HISTÓRICO</text>
-          
-          <!-- Retrato / Iconografía de Autoridad -->
-          <circle cx="400" cy="330" r="160" fill="#0d1117" stroke="#d4af37" stroke-width="4"/>
-          <!-- Silueta bata blanca y corbata -->
-          <path d="M310 470 L340 370 L400 410 L460 370 L490 470 Z" fill="#f8fafc"/>
-          <path d="M385 410 L415 410 L410 465 L400 475 L390 465 Z" fill="#0284c7"/>
-          <circle cx="400" cy="270" r="75" fill="#334155"/>
-          <rect x="360" y="250" width="80" height="14" rx="4" fill="#d4af37"/>
-          
-          <text x="400" y="550" font-family="'Plus Jakarta Sans', sans-serif" font-size="34" font-weight="800" fill="#ffffff" text-anchor="middle">STANLEY MILGRAM</text>
-          <text x="400" y="595" font-family="'Plus Jakarta Sans', sans-serif" font-size="20" font-weight="600" fill="#38bdf8" text-anchor="middle">Universidad de Yale · 1963 / 1974</text>
-          
-          <rect x="70" y="640" width="660" height="380" rx="12" fill="#0d1117" stroke="#21262d" stroke-width="2"/>
-          <text x="100" y="690" font-family="'Space Grotesk', sans-serif" font-size="18" font-weight="700" fill="#f59e0b">PREGUNTA FUNDAMENTAL:</text>
-          <text x="100" y="730" font-family="'Plus Jakarta Sans', sans-serif" font-size="19" fill="#e2e8f0">¿Hasta qué punto un individuo común es capaz</text>
-          <text x="100" y="765" font-family="'Plus Jakarta Sans', sans-serif" font-size="19" fill="#e2e8f0">de infligir daño por obedecer a una autoridad?</text>
-          
-          <line x1="100" y1="805" x2="700" y2="805" stroke="#30363d" stroke-width="1.5"/>
-          
-          <text x="100" y="850" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#94a3b8">• Marco: Juicio a Adolf Eichmann y Crímenes de Obediencia.</text>
-          <text x="100" y="890" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#94a3b8">• Muestra: 40 ciudadanos corrientes (no reclutas ni enfermos).</text>
-          <text x="100" y="930" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#94a3b8">• Objetivo: Probar el poder de la estructura situacional.</text>
-          <text x="400" y="985" font-family="'Space Grotesk', sans-serif" font-size="16" font-weight="700" fill="#38bdf8" text-anchor="middle">PSICOLOGÍA SOCIAL DE LA OBEDIENCIA</text>
-        </svg>`,
-
-        // 2. Experimento de Líneas de Solomon Asch
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="100%" height="100%">
-          <rect width="800" height="1100" fill="#0d1117"/>
-          <rect x="25" y="25" width="750" height="1050" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3"/>
-          <rect x="50" y="55" width="700" height="50" rx="8" fill="#21262d"/>
-          <text x="75" y="87" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="700" fill="#38bdf8" letter-spacing="3">SECCIÓN 02 · PARADIGMA DE CONFORMIDAD</text>
-
-          <text x="400" y="165" font-family="'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="800" fill="#ffffff" text-anchor="middle">EXPERIMENTO DE LÍNEAS (ASCH 1951)</text>
-          
-          <!-- Tarjetas de Asch -->
-          <!-- Tarjeta Patrón X -->
-          <rect x="70" y="210" width="260" height="420" rx="14" fill="#0d1117" stroke="#38bdf8" stroke-width="3"/>
-          <text x="200" y="255" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="700" fill="#38bdf8" text-anchor="middle">TARJETA PATRÓN</text>
-          <line x1="200" y1="300" x2="200" y2="540" stroke="#38bdf8" stroke-width="18" stroke-linecap="round"/>
-          <text x="200" y="595" font-family="'Space Grotesk', sans-serif" font-size="24" font-weight="800" fill="#ffffff" text-anchor="middle">Línea X</text>
-
-          <!-- Tarjeta Comparación A, B, C -->
-          <rect x="370" y="210" width="360" height="420" rx="14" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
-          <text x="550" y="255" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="700" fill="#94a3b8" text-anchor="middle">COMPARACIÓN</text>
-          
-          <!-- Línea A (Incorrecta corta) -->
-          <line x1="430" y1="370" x2="430" y2="540" stroke="#ef4444" stroke-width="14" stroke-linecap="round"/>
-          <text x="430" y="585" font-family="'Plus Jakarta Sans', sans-serif" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">A</text>
-
-          <!-- Línea B (Correcta = X) -->
-          <line x1="550" y1="300" x2="550" y2="540" stroke="#10b981" stroke-width="18" stroke-linecap="round"/>
-          <text x="550" y="585" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="800" fill="#10b981" text-anchor="middle">B (=X)</text>
-
-          <!-- Línea C (Incorrecta larga) -->
-          <line x1="660" y1="260" x2="660" y2="540" stroke="#ef4444" stroke-width="14" stroke-linecap="round"/>
-          <text x="660" y="585" font-family="'Plus Jakarta Sans', sans-serif" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">C</text>
-
-          <!-- Caja de Datos Clave -->
-          <rect x="70" y="660" width="660" height="360" rx="12" fill="#0d1117" stroke="#21262d" stroke-width="2"/>
-          <rect x="100" y="690" width="280" height="60" rx="8" fill="rgba(239, 68, 68, 0.15)" stroke="#ef4444" stroke-width="1.5"/>
-          <text x="240" y="728" font-family="'Space Grotesk', sans-serif" font-size="22" font-weight="800" fill="#ef4444" text-anchor="middle">75% CONFORMIDAD</text>
-
-          <text x="100" y="790" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#e2e8f0">• <strong>Condición control (aislado):</strong> Errores menores al 5%.</text>
-          <text x="100" y="830" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#e2e8f0">• <strong>Presión de grupo:</strong> 7 a 9 cómplices dieron juicio unánime errado.</text>
-          <text x="100" y="870" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#e2e8f0">• <strong>Efecto del Aliado:</strong> 1 solo disidente derriba la conformidad al 5%.</text>
-          <line x1="100" y1="910" x2="700" y2="910" stroke="#30363d" stroke-width="1.5"/>
-          <text x="400" y="960" font-family="'Space Grotesk', sans-serif" font-size="16" font-weight="700" fill="#f59e0b" text-anchor="middle">CONFORMIDAD HORIZONTAL (ENTRE IGUALES)</text>
-        </svg>`,
-
-        // 3. Montaje Experimental Triádico de Milgram
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="100%" height="100%">
-          <rect width="800" height="1100" fill="#0d1117"/>
-          <rect x="25" y="25" width="750" height="1050" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3"/>
-          <rect x="50" y="55" width="700" height="50" rx="8" fill="#21262d"/>
-          <text x="75" y="87" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="700" fill="#38bdf8" letter-spacing="3">SECCIÓN 03 · DISPOSITIVO EXPERIMENTAL</text>
-
-          <text x="400" y="160" font-family="'Plus Jakarta Sans', sans-serif" font-size="26" font-weight="800" fill="#ffffff" text-anchor="middle">ESTRUCTURA TRIÁDICA DE INTERACCIÓN</text>
-
-          <!-- Plano de los dos cuartos -->
-          <rect x="60" y="200" width="680" height="460" rx="14" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
-          <line x1="400" y1="200" x2="400" y2="660" stroke="#f59e0b" stroke-width="4" stroke-dasharray="12,12"/>
-
-          <!-- Cuarto 1: Experimentador y Profesor -->
-          <text x="230" y="240" font-family="'Space Grotesk', sans-serif" font-size="16" font-weight="700" fill="#38bdf8" text-anchor="middle">SALA DE CONTROL</text>
-          
-          <circle cx="160" cy="330" r="38" fill="#f8fafc"/>
-          <text x="160" y="338" font-family="sans-serif" font-size="22" font-weight="bold" fill="#0f172a" text-anchor="middle">E</text>
-          <text x="160" y="390" font-family="'Plus Jakarta Sans', sans-serif" font-size="15" font-weight="700" fill="#38bdf8" text-anchor="middle">Experimentador</text>
-          <text x="160" y="410" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">(Bata Blanca / Yale)</text>
-
-          <circle cx="300" cy="480" r="38" fill="#0284c7"/>
-          <text x="300" y="488" font-family="sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">P</text>
-          <text x="300" y="540" font-family="'Plus Jakarta Sans', sans-serif" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">Profesor</text>
-          <text x="300" y="560" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#38bdf8" text-anchor="middle">(Sujeto Ingenuo)</text>
-
-          <!-- Consola en Cuarto 1 -->
-          <rect x="230" y="380" width="140" height="50" rx="6" fill="#1e293b" stroke="#d4af37" stroke-width="2"/>
-          <text x="300" y="410" font-family="'Space Grotesk', sans-serif" font-size="12" font-weight="700" fill="#f59e0b" text-anchor="middle">CONSOLA 15V-450V</text>
-
-          <!-- Cuarto 2: Alumno / Víctima -->
-          <text x="570" y="240" font-family="'Space Grotesk', sans-serif" font-size="16" font-weight="700" fill="#ef4444" text-anchor="middle">SALA DE LA VÍCTIMA</text>
-
-          <circle cx="570" cy="400" r="42" fill="rgba(239, 68, 68, 0.2)" stroke="#ef4444" stroke-width="3"/>
-          <text x="570" y="408" font-family="sans-serif" font-size="24" font-weight="bold" fill="#ef4444" text-anchor="middle">A</text>
-          <text x="570" y="470" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="700" fill="#ef4444" text-anchor="middle">Alumno (Víctima)</text>
-          <text x="570" y="495" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#cbd5e1" text-anchor="middle">Cómplice atado a silla</text>
-          <text x="570" y="515" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">con electrodos en muñeca</text>
-
-          <!-- Cables simulados -->
-          <path d="M370 405 C 440 405, 480 400, 528 400" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="6,4"/>
-
-          <!-- Detalles inferiores -->
-          <rect x="60" y="690" width="680" height="330" rx="12" fill="#0d1117" stroke="#21262d" stroke-width="2"/>
-          <text x="90" y="735" font-family="'Space Grotesk', sans-serif" font-size="18" font-weight="700" fill="#f59e0b">CLAVES DEL MONTAJE:</text>
-          <text x="90" y="775" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#e2e8f0">• <strong>Sorteo trucado:</strong> El sujeto real siempre es asignado como «Profesor».</text>
-          <text x="90" y="815" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#e2e8f0">• <strong>Descarga real de muestra:</strong> El profesor recibe 45V para autenticidad.</text>
-          <text x="90" y="855" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#e2e8f0">• <strong>Separación física:</strong> Retroalimentación vocal estandarizada por audio.</text>
-          <line x1="90" y1="895" x2="710" y2="895" stroke="#30363d" stroke-width="1.5"/>
-          <text x="400" y="955" font-family="'Space Grotesk', sans-serif" font-size="16" font-weight="700" fill="#38bdf8" text-anchor="middle">RELACIÓN ASIMÉTRICA: AUTORIDAD VS SUBORDINADO</text>
-        </svg>`,
-
-        // 4. Generador de Descargas y 4 Órdenes
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="100%" height="100%">
-          <rect width="800" height="1100" fill="#0d1117"/>
-          <rect x="25" y="25" width="750" height="1050" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3"/>
-          <rect x="50" y="55" width="700" height="50" rx="8" fill="#21262d"/>
-          <text x="75" y="87" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="700" fill="#ef4444" letter-spacing="3">SECCIÓN 04 · PROTOCOLO DE PRESIÓN</text>
-
-          <!-- Consola Milgram -->
-          <rect x="60" y="140" width="680" height="360" rx="14" fill="#0a0e14" stroke="#d4af37" stroke-width="3"/>
-          <text x="400" y="185" font-family="'Space Grotesk', sans-serif" font-size="22" font-weight="800" fill="#f8fafc" text-anchor="middle">SHOCK GENERATOR TYPE ZLB · MILGRAM</text>
-          
-          <!-- Medidor análogo -->
-          <rect x="280" y="210" width="240" height="65" rx="6" fill="#1e293b" stroke="#475569" stroke-width="2"/>
-          <path d="M300 260 Q 400 230 500 260" fill="none" stroke="#64748b" stroke-width="3"/>
-          <line x1="400" y1="265" x2="470" y2="225" stroke="#ef4444" stroke-width="3"/>
-          <circle cx="400" cy="265" r="5" fill="#f59e0b"/>
-          <text x="400" y="295" font-family="'Space Grotesk', sans-serif" font-size="12" fill="#94a3b8" text-anchor="middle">VOLTAJE DE SALIDA</text>
-
-          <!-- Rango de 30 interruptores -->
-          <rect x="90" y="320" width="620" height="70" rx="8" fill="#161b22"/>
-          <circle cx="120" cy="355" r="12" fill="#38bdf8"/>
-          <circle cx="180" cy="355" r="12" fill="#38bdf8"/>
-          <circle cx="240" cy="355" r="12" fill="#38bdf8"/>
-          <circle cx="300" cy="355" r="12" fill="#eab308"/>
-          <circle cx="360" cy="355" r="12" fill="#eab308"/>
-          <circle cx="420" cy="355" r="12" fill="#f97316"/>
-          <circle cx="480" cy="355" r="12" fill="#f97316"/>
-          <circle cx="540" cy="355" r="12" fill="#ef4444"/>
-          <circle cx="600" cy="355" r="12" fill="#ef4444"/>
-          <circle cx="660" cy="355" r="14" fill="#dc2626" stroke="#ffffff" stroke-width="2"/>
-
-          <!-- Textos de voltaje -->
-          <text x="120" y="425" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="700" fill="#38bdf8" text-anchor="middle">15V</text>
-          <text x="120" y="445" font-family="sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">Leve</text>
-
-          <text x="360" y="425" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="700" fill="#eab308" text-anchor="middle">195V</text>
-          <text x="360" y="445" font-family="sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">Muy Fuerte</text>
-
-          <text x="540" y="425" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="700" fill="#ef4444" text-anchor="middle">375V</text>
-          <text x="540" y="445" font-family="sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">Peligro</text>
-
-          <text x="660" y="425" font-family="'Space Grotesk', sans-serif" font-size="16" font-weight="900" fill="#ef4444" text-anchor="middle">450V</text>
-          <text x="660" y="448" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="800" fill="#ef4444" text-anchor="middle">XXX</text>
-
-          <!-- Las 4 Órdenes Graduadas -->
-          <rect x="60" y="530" width="680" height="490" rx="14" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
-          <text x="400" y="575" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="800" fill="#f59e0b" text-anchor="middle">LAS 4 CONMINACIONES ESTANDARIZADAS</text>
-
-          <rect x="90" y="605" width="620" height="65" rx="8" fill="#161b22" stroke="#38bdf8" stroke-width="1.5"/>
-          <text x="120" y="644" font-family="'Space Grotesk', sans-serif" font-size="17" font-weight="700" fill="#38bdf8">Orden 1:</text>
-          <text x="210" y="644" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" font-weight="600" fill="#ffffff">«Por favor, continúe» o «Siga adelante»</text>
-
-          <rect x="90" y="685" width="620" height="65" rx="8" fill="#161b22" stroke="#eab308" stroke-width="1.5"/>
-          <text x="120" y="724" font-family="'Space Grotesk', sans-serif" font-size="17" font-weight="700" fill="#eab308">Orden 2:</text>
-          <text x="210" y="724" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" font-weight="600" fill="#ffffff">«El experimento requiere que usted continúe»</text>
-
-          <rect x="90" y="765" width="620" height="65" rx="8" fill="#161b22" stroke="#f97316" stroke-width="1.5"/>
-          <text x="120" y="804" font-family="'Space Grotesk', sans-serif" font-size="17" font-weight="700" fill="#f97316">Orden 3:</text>
-          <text x="210" y="804" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" font-weight="600" fill="#ffffff">«Es absolutamente indispensable que continúe»</text>
-
-          <rect x="90" y="845" width="620" height="65" rx="8" fill="#161b22" stroke="#ef4444" stroke-width="2"/>
-          <text x="120" y="884" font-family="'Space Grotesk', sans-serif" font-size="17" font-weight="700" fill="#ef4444">Orden 4:</text>
-          <text x="210" y="884" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" font-weight="800" fill="#ef4444">«No tiene otra opción; DEBE continuar»</text>
-
-          <text x="400" y="965" font-family="'Plus Jakarta Sans', sans-serif" font-size="15" fill="#94a3b8" text-anchor="middle">Si tras la 4ª orden el sujeto rehusaba, se daba por terminada la prueba.</text>
-        </svg>`,
-
-        // 5. Resultados Cuantitativos (65% y Variantes)
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="100%" height="100%">
-          <rect width="800" height="1100" fill="#0d1117"/>
-          <rect x="25" y="25" width="750" height="1050" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3"/>
-          <rect x="50" y="55" width="700" height="50" rx="8" fill="#21262d"/>
-          <text x="75" y="87" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="700" fill="#f59e0b" letter-spacing="3">SECCIÓN 05 · EVIDENCIA CUANTITATIVA</text>
-
-          <text x="400" y="160" font-family="'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="800" fill="#ffffff" text-anchor="middle">TASA DE SUMISIÓN A 450V</text>
-
-          <!-- Gráfica de Barras Comparativa -->
-          <rect x="60" y="195" width="680" height="490" rx="14" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
-
-          <!-- Barra 1: Condición Estándar (65%) -->
-          <text x="90" y="240" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" font-weight="700" fill="#ffffff">Línea Base Estándar (Yale)</text>
-          <rect x="90" y="255" width="460" height="50" rx="8" fill="#ef4444"/>
-          <text x="570" y="290" font-family="'Space Grotesk', sans-serif" font-size="28" font-weight="900" fill="#ef4444">65%</text>
-          <text x="105" y="287" font-family="'Plus Jakarta Sans', sans-serif" font-size="15" font-weight="700" fill="#ffffff">26 de 40 sujetos a 450V</text>
-
-          <!-- Barra 2: Misma Habitación (40%) -->
-          <text x="90" y="345" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" font-weight="700" fill="#ffffff">Víctima en la misma sala</text>
-          <rect x="90" y="360" width="280" height="50" rx="8" fill="#f97316"/>
-          <text x="390" y="395" font-family="'Space Grotesk', sans-serif" font-size="26" font-weight="800" fill="#f97316">40%</text>
-
-          <!-- Barra 3: Contacto Táctil (30%) -->
-          <text x="90" y="450" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" font-weight="700" fill="#ffffff">Contacto forzado (mano en placa)</text>
-          <rect x="90" y="465" width="210" height="50" rx="8" fill="#eab308"/>
-          <text x="320" y="500" font-family="'Space Grotesk', sans-serif" font-size="26" font-weight="800" fill="#eab308">30%</text>
-
-          <!-- Barra 4: Órdenes por Teléfono (21%) -->
-          <text x="90" y="555" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" font-weight="700" fill="#ffffff">Autoridad ausente (por teléfono)</text>
-          <rect x="90" y="570" width="150" height="45" rx="8" fill="#38bdf8"/>
-          <text x="260" y="602" font-family="'Space Grotesk', sans-serif" font-size="24" font-weight="800" fill="#38bdf8">21%</text>
-
-          <!-- Barra 5: Rebelión de Pares (10%) -->
-          <text x="90" y="650" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" font-weight="700" fill="#ffffff">2 Pares desobedientes</text>
-          <rect x="90" y="660" width="70" height="40" rx="8" fill="#10b981"/>
-          <text x="180" y="690" font-family="'Space Grotesk', sans-serif" font-size="24" font-weight="800" fill="#10b981">10%</text>
-
-          <!-- Panel de Contraste con Predicciones -->
-          <rect x="60" y="730" width="680" height="290" rx="14" fill="#0d1117" stroke="#21262d" stroke-width="2"/>
-          <text x="90" y="775" font-family="'Space Grotesk', sans-serif" font-size="19" font-weight="800" fill="#f59e0b">PREDICCIÓN PSIQUIÁTRICA VS REALIDAD:</text>
-          <text x="90" y="820" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#cbd5e1">• <strong>Pronóstico de 39 psiquiatras:</strong> Solo el <strong style="color:#ef4444">1.2%</strong> (sádicos) llegaría a 450V.</text>
-          <text x="90" y="865" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#cbd5e1">• <strong>Dato Real:</strong> El <strong style="color:#ef4444">100%</strong> de los sujetos llegó al menos a los 300V.</text>
-          <line x1="90" y1="910" x2="710" y2="910" stroke="#30363d" stroke-width="1.5"/>
-          <text x="400" y="965" font-family="'Space Grotesk', sans-serif" font-size="17" font-weight="700" fill="#38bdf8" text-anchor="middle">RUPTURA RADICAL CON EL ENFOQUE DISPOSICIONAL</text>
-        </svg>`,
-
-        // 6. Dato Bruto vs Interpretación Psicológica
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="100%" height="100%">
-          <rect width="800" height="1100" fill="#0d1117"/>
-          <rect x="25" y="25" width="750" height="1050" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3"/>
-          <rect x="50" y="55" width="700" height="50" rx="8" fill="#21262d"/>
-          <text x="75" y="87" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="700" fill="#38bdf8" letter-spacing="3">SECCIÓN 06 · DISTINCIÓN EPISTEMOLÓGICA</text>
-
-          <text x="400" y="160" font-family="'Plus Jakarta Sans', sans-serif" font-size="26" font-weight="800" fill="#ffffff" text-anchor="middle">DATO EMPÍRICO VS INTERPRETACIÓN</text>
-
-          <!-- Columna Izquierda: Dato Bruto -->
-          <rect x="60" y="200" width="320" height="520" rx="14" fill="#0d1117" stroke="#ef4444" stroke-width="2.5"/>
-          <rect x="80" y="225" width="280" height="50" rx="8" fill="rgba(239, 68, 68, 0.15)"/>
-          <text x="220" y="258" font-family="'Space Grotesk', sans-serif" font-size="18" font-weight="800" fill="#ef4444" text-anchor="middle">EL DATO BRUTO</text>
-
-          <text x="90" y="320" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="700" fill="#ffffff">• 65% alcanzó los 450V.</text>
-          <text x="90" y="370" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#cbd5e1">• Conducta observable de sumisión continuada.</text>
-          <text x="90" y="440" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#cbd5e1">• Respuesta motriz: pulsar interruptores ante órdenes técnicas.</text>
-          
-          <rect x="85" y="550" width="270" height="130" rx="10" fill="#161b22" stroke="#30363d"/>
-          <text x="220" y="590" font-family="'Space Grotesk', sans-serif" font-size="15" font-weight="700" fill="#ef4444" text-anchor="middle">ERROR COMÚN:</text>
-          <text x="220" y="625" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" fill="#94a3b8" text-anchor="middle">«Eran personas sádicas»</text>
-          <text x="220" y="650" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="700" fill="#ef4444" text-anchor="middle">(HIPÓTESIS REFUTADA)</text>
-
-          <!-- Columna Derecha: Interpretación Psicosocial -->
-          <rect x="420" y="200" width="320" height="520" rx="14" fill="#0d1117" stroke="#38bdf8" stroke-width="2.5"/>
-          <rect x="440" y="225" width="280" height="50" rx="8" fill="rgba(56, 189, 248, 0.15)"/>
-          <text x="580" y="258" font-family="'Space Grotesk', sans-serif" font-size="18" font-weight="800" fill="#38bdf8" text-anchor="middle">INTERPRETACIÓN</text>
-
-          <text x="450" y="320" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="700" fill="#ffffff">• Fuerza de la Situación.</text>
-          <text x="450" y="370" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#cbd5e1">• Angustia y conflicto moral: sudoración, quejas, temblores.</text>
-          <text x="450" y="440" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#cbd5e1">• Dificultad para romper la definición de autoridad legítima.</text>
-
-          <rect x="445" y="550" width="270" height="130" rx="10" fill="#161b22" stroke="#38bdf8"/>
-          <text x="580" y="590" font-family="'Space Grotesk', sans-serif" font-size="15" font-weight="700" fill="#38bdf8" text-anchor="middle">TESIS PSICOSOCIAL:</text>
-          <text x="580" y="625" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" fill="#cbd5e1" text-anchor="middle">Poder del contexto social</text>
-          <text x="580" y="650" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="700" fill="#38bdf8" text-anchor="middle">sobre la moral individual</text>
-
-          <!-- Tarjeta Inferior: Sesgo de Atribución -->
-          <rect x="60" y="750" width="680" height="270" rx="14" fill="#0d1117" stroke="#d4af37" stroke-width="2"/>
-          <text x="400" y="795" font-family="'Space Grotesk', sans-serif" font-size="19" font-weight="800" fill="#f59e0b" text-anchor="middle">SESGO DE ATRIBUCIÓN FUNDAMENTAL</text>
-          <text x="90" y="845" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#f8fafc">Tendencia errónea a atribuir la crueldad a rasgos perversos de la persona,</text>
-          <text x="90" y="885" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#f8fafc">ignorando las presiones coercitivas del rol y la jerarquía institucional.</text>
-          <text x="400" y="965" font-family="'Space Grotesk', sans-serif" font-size="16" font-weight="700" fill="#d4af37" text-anchor="middle">LEVINE &amp; PAVELCHAK — CONFORMIDAD Y OBEDIENCIA</text>
-        </svg>`,
-
-        // 7. Teoría del Estado Agéntico
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="100%" height="100%">
-          <rect width="800" height="1100" fill="#0d1117"/>
-          <rect x="25" y="25" width="750" height="1050" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3"/>
-          <rect x="50" y="55" width="700" height="50" rx="8" fill="#21262d"/>
-          <text x="75" y="87" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="700" fill="#f59e0b" letter-spacing="3">SECCIÓN 07 · MARCO TEÓRICO CENTRAL</text>
-
-          <text x="400" y="160" font-family="'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="800" fill="#ffffff" text-anchor="middle">ESTADO AUTÓNOMO VS ESTADO AGÉNTICO</text>
-
-          <!-- 1. Estado de Autonomía -->
-          <rect x="60" y="200" width="680" height="200" rx="14" fill="#0d1117" stroke="#10b981" stroke-width="2.5"/>
-          <text x="90" y="245" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="800" fill="#10b981">1. ESTADO DE AUTONOMÍA</text>
-          <text x="90" y="290" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#ffffff">• El sujeto se concibe como <strong>responsable directo y moral</strong> de sus actos.</text>
-          <text x="90" y="330" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#cbd5e1">• Su propia conciencia y valores éticos regulan su conducta social.</text>
-
-          <!-- Flecha de Cambio Agéntico (Agentic Shift) -->
-          <polygon points="400,455 360,415 440,415" fill="#f59e0b"/>
-          <text x="400" y="485" font-family="'Space Grotesk', sans-serif" font-size="17" font-weight="800" fill="#f59e0b" text-anchor="middle">CAMBIO AGÉNTICO (AGENTIC SHIFT)</text>
-
-          <!-- 2. Estado Agéntico -->
-          <rect x="60" y="515" width="680" height="240" rx="14" fill="#0d1117" stroke="#ef4444" stroke-width="2.5"/>
-          <text x="90" y="560" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="800" fill="#ef4444">2. ESTADO AGÉNTICO (AGENTIC STATE)</text>
-          <text x="90" y="605" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#ffffff">• El individuo se percibe como un <strong>mero instrumento</strong> de la autoridad.</text>
-          <text x="90" y="645" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#cbd5e1">• <strong>Transferencia de responsabilidad:</strong> «Yo solo cumplo órdenes de Yale».</text>
-          <text x="90" y="685" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" fill="#cbd5e1">• El foco moral cambia de <em>«¿está bien hacer daño?»</em> a <em>«¿lo hago con eficacia?»</em>.</text>
-
-          <!-- Factores de Unión / Mantenimiento -->
-          <rect x="60" y="785" width="680" height="240" rx="14" fill="#0d1117" stroke="#21262d" stroke-width="2"/>
-          <text x="90" y="830" font-family="'Space Grotesk', sans-serif" font-size="18" font-weight="800" fill="#38bdf8">FACTORES DE MANTENIMIENTO DEL ESTADO AGÉNTICO:</text>
-          <text x="90" y="875" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#e2e8f0">• <strong>Gradualismo secuencial:</strong> Escalada de 15V en 15V (trampa de compromiso).</text>
-          <text x="90" y="915" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#e2e8f0">• <strong>Socialización jerárquica:</strong> Obediencia inculcada en escuela, trabajo y familia.</text>
-          <text x="400" y="980" font-family="'Space Grotesk', sans-serif" font-size="16" font-weight="700" fill="#f59e0b" text-anchor="middle">STANLEY MILGRAM — OBEDIENCE TO AUTHORITY (1974)</text>
-        </svg>`,
-
-        // 8. Era Digital y Minorías Activas (Moscovici)
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="100%" height="100%">
-          <rect width="800" height="1100" fill="#0d1117"/>
-          <rect x="25" y="25" width="750" height="1050" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3"/>
-          <rect x="50" y="55" width="700" height="50" rx="8" fill="#21262d"/>
-          <text x="75" y="87" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="700" fill="#10b981" letter-spacing="3">SECCIÓN 08 · APLICACIÓN Y SÍNTESIS</text>
-
-          <text x="400" y="155" font-family="'Plus Jakarta Sans', sans-serif" font-size="26" font-weight="800" fill="#ffffff" text-anchor="middle">LA BATA BLANCA DIGITAL &amp; INNOVACIÓN</text>
-
-          <!-- Red Algorítmica Digital -->
-          <rect x="60" y="195" width="680" height="370" rx="14" fill="#0d1117" stroke="#38bdf8" stroke-width="2"/>
-          
-          <circle cx="400" cy="300" r="65" fill="#0f172a" stroke="#38bdf8" stroke-width="3"/>
-          <text x="400" y="295" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="800" fill="#38bdf8" text-anchor="middle">AUTORIDAD</text>
-          <text x="400" y="318" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="800" fill="#38bdf8" text-anchor="middle">ALGORÍTMICA</text>
-
-          <!-- Nodos de usuarios en red -->
-          <circle cx="170" cy="270" r="28" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
-          <circle cx="230" cy="390" r="28" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
-          <circle cx="630" cy="270" r="28" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
-          <circle cx="570" cy="390" r="28" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
-
-          <line x1="198" y1="275" x2="335" y2="295" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4"/>
-          <line x1="255" y1="375" x2="345" y2="335" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4"/>
-          <line x1="602" y1="275" x2="465" y2="295" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4"/>
-          <line x1="545" y1="375" x2="455" y2="335" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4"/>
-
-          <text x="400" y="470" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">Nuevas Formas de Coerción Técnica y Consenso Invisible</text>
-          <text x="400" y="500" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" fill="#94a3b8" text-anchor="middle">Feeds de recomendación, validación social automatizada y cámaras de eco.</text>
-
-          <!-- Minorías Activas de Moscovici -->
-          <rect x="60" y="590" width="680" height="430" rx="14" fill="#0d1117" stroke="#10b981" stroke-width="2.5"/>
-          <rect x="90" y="615" width="340" height="45" rx="8" fill="rgba(16, 185, 129, 0.15)"/>
-          <text x="260" y="644" font-family="'Space Grotesk', sans-serif" font-size="17" font-weight="800" fill="#10b981" text-anchor="middle">SERGE MOSCOVICI · INNOVACIÓN</text>
-
-          <text x="90" y="700" font-family="'Plus Jakarta Sans', sans-serif" font-size="17" font-weight="700" fill="#ffffff">• Las Minorías Activas como motor de cambio social.</text>
-          <text x="90" y="740" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#cbd5e1">• La conformidad y la obediencia <strong>no son inevitables</strong>.</text>
-          <text x="90" y="780" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#cbd5e1">• Requisito: Mantener un estilo de comportamiento <strong>consistente y firme</strong>.</text>
-          <text x="90" y="820" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#cbd5e1">• Provocan conversión profunda (validación), no simple sumisión exterior.</text>
-
-          <line x1="90" y1="865" x2="710" y2="865" stroke="#30363d" stroke-width="1.5"/>
-          
-          <text x="400" y="920" font-family="'Space Grotesk', sans-serif" font-size="18" font-weight="800" fill="#d4af37" text-anchor="middle">«CONOCER LA PRESIÓN SOCIAL ES EL PRIMER PASO</text>
-          <text x="400" y="955" font-family="'Space Grotesk', sans-serif" font-size="18" font-weight="800" fill="#d4af37" text-anchor="middle">PARA EJERCER NUESTRA LIBERTAD MORAL»</text>
-        </svg>`
-      ];
-
-      return `data:image/svg+xml;utf8,${encodeURIComponent(svgs[index])}`;
-    }
+    // FOTOGRAFÍAS HISTÓRICAS REALES DE PSICOLOGÍA SOCIAL (WIKIMEDIA COMMONS)
+    const ACADEMIC_IMAGES = [
+      // 1. Stanley Milgram (Foto histórica real 1954/1963)
+      "https://upload.wikimedia.org/wikipedia/commons/d/da/Stanley_Milgram_1954.jpg",
+      // 2. Experimento de estimación de líneas de Solomon Asch (Tarjetas originales)
+      "https://upload.wikimedia.org/wikipedia/commons/4/47/Asch_experiment.png",
+      // 3. Anuncio original de reclutamiento para el estudio en Yale (1961)
+      "https://upload.wikimedia.org/wikipedia/commons/3/34/Milgram_Experiment_advertising.png",
+      // 4. Montaje técnico de la consola y habitaciones del experimento de Milgram
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Milgram_experiment_v2.svg/1024px-Milgram_experiment_v2.svg.png",
+      // 5. Gráfica de resultados empíricos (65% obediencia total)
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Graph_of_Milgram-Experiment.svg/1024px-Graph_of_Milgram-Experiment.svg.png",
+      // 6. Adolf Eichmann en el juicio de Jerusalén (1961 - base histórica del dilema moral)
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Adolf_Eichmann_at_Trial1961.jpg/800px-Adolf_Eichmann_at_Trial1961.jpg",
+      // 7. Portada histórica de «Obedience to Authority» de Milgram (1974 - Estado Agéntico)
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Obedience_to_Authority_by_Stanley_Milgram.jpg/600px-Obedience_to_Authority_by_Stanley_Milgram.jpg",
+      // 8. Serge Moscovici (Fotografía real del autor de las Minorías Activas)
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Serge_Moscovici.jpg/600px-Serge_Moscovici.jpg"
+    ];
 
     // CONTENIDO ACADÉMICO LIMPIO
     const THEMES = [
@@ -1226,62 +874,26 @@
       return texture;
     }
 
-    // RENDERIZADO DIRECTO DE LAS INFOGRAFÍAS VECTORIALES EN LAS TEXTURAS 3D
-    function createArtworkTexture(imgNum) {
-      const cv = document.createElement('canvas');
-      cv.width = 800;
-      cv.height = 1100;
-      const ctx = cv.getContext('2d');
-
-      ctx.fillStyle = '#161b22';
-      ctx.fillRect(0, 0, 800, 1100);
-
-      const texture = new THREE.CanvasTexture(cv);
-      texture.anisotropy = 8;
-      texture.colorSpace = THREE.SRGBColorSpace;
-
-      const img = new Image();
-      img.onload = () => {
-        ctx.drawImage(img, 0, 0, 800, 1100);
-        texture.needsUpdate = true;
-      };
-      img.src = getVectorIllustration(imgNum - 1);
-
-      return texture;
-    }
+    // CARGA DE TEXTURAS DE LAS FOTOGRAFÍAS REALES
+    const textureLoader = new THREE.TextureLoader();
+    textureLoader.setCrossOrigin('anonymous');
 
     const textureCache = [];
     const imageSources = [];
 
-    for (let i = 1; i <= UNIQUE_IMAGES; i++) {
-      textureCache[i] = createArtworkTexture(i);
-      imageSources[i] = '';
+    function loadArtworkTexture(imgNum) {
+      const url = ACADEMIC_IMAGES[imgNum - 1];
+      imageSources[imgNum] = url;
+
+      const tex = textureLoader.load(url);
+      tex.anisotropy = 8;
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
     }
 
-    // ARRASTRAR Y SOLTAR IMÁGENES OPCIONAL
-    window.addEventListener('dragover', e => e.preventDefault());
-    window.addEventListener('drop', e => {
-      e.preventDefault();
-      const files = Array.from(e.dataTransfer.files);
-      files.forEach(file => {
-        const match = file.name.match(/\d+/);
-        if (match) {
-          const num = ((parseInt(match[0], 10) - 1) % UNIQUE_IMAGES) + 1;
-          const url = URL.createObjectURL(file);
-          const img = new Image();
-          img.onload = () => {
-            const tex = textureCache[num];
-            const cv = tex.image;
-            const ctx = cv.getContext('2d');
-            ctx.clearRect(0, 0, cv.width, cv.height);
-            ctx.drawImage(img, 0, 0, cv.width, cv.height);
-            tex.needsUpdate = true;
-            imageSources[num] = url;
-          };
-          img.src = url;
-        }
-      });
-    });
+    for (let i = 1; i <= UNIQUE_IMAGES; i++) {
+      textureCache[i] = loadArtworkTexture(i);
+    }
 
     // RENDERER Y ESCENA 3D
     const canvas = document.getElementById('webgl-canvas');
@@ -1507,7 +1119,6 @@
 
     function updateModalContent(index) {
       currentIndex = index;
-      const imgNum = (index % UNIQUE_IMAGES) + 1;
       const themeIdx = index % UNIQUE_IMAGES;
       const theme = THEMES[themeIdx];
 
@@ -1524,11 +1135,8 @@
       infoMainPoints.innerHTML = theme.points;
       infoAnalysisText.innerHTML = theme.analysis;
 
-      if (imageSources[imgNum] && imageSources[imgNum] !== '') {
-        infoImg.src = imageSources[imgNum];
-      } else {
-        infoImg.src = getVectorIllustration(themeIdx);
-      }
+      // Carga directa de la foto histórica real
+      infoImg.src = ACADEMIC_IMAGES[themeIdx];
     }
 
     function openInfoSpace(index) {
