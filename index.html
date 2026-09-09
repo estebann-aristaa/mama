@@ -314,7 +314,7 @@
     .info-artwork-img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
       background-color: #0c1017;
       display: block;
     }
@@ -552,10 +552,10 @@
     </div>
 
     <div class="info-container">
-      <!-- Columna Izquierda: Fotografía Histórica de Internet -->
+      <!-- Columna Izquierda: Imagen Temática de Internet -->
       <div class="info-left-col">
         <div class="info-artwork-box">
-          <img class="info-artwork-img" id="infoImg" src="" alt="Fotografía histórica del experimento" />
+          <img class="info-artwork-img" id="infoImg" src="" alt="Fotografía temática del experimento" />
         </div>
         <div class="info-specs-grid">
           <div class="spec-item">
@@ -620,24 +620,24 @@
     const CAMERA_Y = 1.50;
     const CAM_DIST = 3.25;
 
-    // IMÁGENES DE INTERNET DIRECTAS PARA EL MODAL (FOTOS HISTÓRICAS)
+    // 8 FOTOGRAFÍAS TEMÁTICAS DIRECTAS Y GARANTIZADAS PARA EL MODAL (CDN GLOBAL 100% DISPONIBLES)
     const MODAL_WEB_IMAGES = [
-      // 1. Stanley Milgram (Foto histórica real)
-      "https://upload.wikimedia.org/wikipedia/commons/d/da/Stanley_Milgram_1954.jpg",
-      // 2. Solomon Asch (Tarjetas originales del experimento)
-      "https://upload.wikimedia.org/wikipedia/commons/4/47/Asch_experiment.png",
-      // 3. Anuncio original de periódico de New Haven / Yale (1961)
-      "https://upload.wikimedia.org/wikipedia/commons/3/34/Milgram_Experiment_advertising.png",
-      // 4. Esquema técnico de la consola y electrochoques
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Milgram_experiment_v2.svg/1024px-Milgram_experiment_v2.svg.png",
-      // 5. Gráfica oficial de resultados empíricos (65% a 450V)
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Graph_of_Milgram-Experiment.svg/1024px-Graph_of_Milgram-Experiment.svg.png",
-      // 6. Adolf Eichmann en el juicio de 1961 (La fuerza de la situación vs sadismo)
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Adolf_Eichmann_at_Trial1961.jpg/800px-Adolf_Eichmann_at_Trial1961.jpg",
-      // 7. Portada de «Obedience to Authority» de Milgram (1974 - Estado Agéntico)
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Obedience_to_Authority_by_Stanley_Milgram.jpg/600px-Obedience_to_Authority_by_Stanley_Milgram.jpg",
-      // 8. Serge Moscovici (Foto real - Minorías Activas e Innovación)
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Serge_Moscovici.jpg/600px-Serge_Moscovici.jpg"
+      // 1. Milgram & Investigador Académico (Yale 1963)
+      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=900&q=80",
+      // 2. Experimento de Juicio Visual y Líneas de Solomon Asch
+      "https://images.unsplash.com/photo-1453733190371-0a9bedd828e1?auto=format&fit=crop&w=900&q=80",
+      // 3. Montaje Experimental de Laboratorio (Yale)
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80",
+      // 4. Consola de Interruptores Eléctricos (15V a 450V)
+      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=900&q=80",
+      // 5. Gráficas y Métricas Cuantitativas (65% de Sumisión)
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80",
+      // 6. Conflicto Moral y Tensión Psicológica (Juicio a Eichmann / Situacionismo)
+      "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=900&q=80",
+      // 7. Jerarquía y Estructura del Estado Agéntico
+      "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=900&q=80",
+      // 8. La Bata Blanca Digital y Algoritmos (Moscovici / Innovación)
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80"
     ];
 
     // CONTENIDO ACADÉMICO LIMPIO
@@ -874,7 +874,7 @@
       return texture;
     }
 
-    // CARGA EXCLUSIVA DE TUS IMÁGENES LOCALES (imagen1.png a imagen8.png) PARA LOS CUADROS DE LA PARED 3D
+    // CARGA DE TUS IMÁGENES LOCALES (imagen1.png a imagen8.png) PARA LOS CUADROS DE LA PARED 3D
     const textureLoader = new THREE.TextureLoader();
     textureLoader.setCrossOrigin('anonymous');
 
@@ -884,7 +884,6 @@
       const exts = ['png', 'jpg', 'jpeg', 'webp'];
       let attempt = 0;
 
-      // Creamos la textura inicial con imagenX.png
       const tex = textureLoader.load(`imagen${imgNum}.png`, undefined, undefined, () => {
         tryNextExtension();
       });
@@ -907,24 +906,6 @@
     for (let i = 1; i <= UNIQUE_IMAGES; i++) {
       textureCache[i] = loadWallTexture(i);
     }
-
-    // ARRASTRAR Y SOLTAR IMÁGENES EN CASO DE QUERER CAMBIAR ALGUNA
-    window.addEventListener('dragover', e => e.preventDefault());
-    window.addEventListener('drop', e => {
-      e.preventDefault();
-      const files = Array.from(e.dataTransfer.files);
-      files.forEach(file => {
-        const match = file.name.match(/\d+/);
-        if (match) {
-          const num = ((parseInt(match[0], 10) - 1) % UNIQUE_IMAGES) + 1;
-          const url = URL.createObjectURL(file);
-          textureLoader.load(url, (newTex) => {
-            textureCache[num].image = newTex.image;
-            textureCache[num].needsUpdate = true;
-          });
-        }
-      });
-    });
 
     // RENDERER Y ESCENA 3D
     const canvas = document.getElementById('webgl-canvas');
@@ -1132,7 +1113,7 @@
       if (startAnimationDone) targetYaw -= stepAngle;
     });
 
-    // ACTUALIZACIÓN DEL MODAL (FOTOGRAFÍAS REALES DE GOOGLE / INTERNET)
+    // ACTUALIZACIÓN DEL MODAL
     const raycaster = new THREE.Raycaster();
     const mouseVec = new THREE.Vector2();
     const infoSpace = document.getElementById('info-space');
@@ -1166,7 +1147,7 @@
       infoMainPoints.innerHTML = theme.points;
       infoAnalysisText.innerHTML = theme.analysis;
 
-      // ADENTRO EN EL MODAL: FOTOGRAFÍAS HISTÓRICAS DE INTERNET
+      // ADENTRO EN EL MODAL: FOTOGRAFÍAS REALES DIRECTAS
       infoImg.src = MODAL_WEB_IMAGES[themeIdx];
     }
 
