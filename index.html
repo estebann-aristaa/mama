@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>365days+1 — Galería al Aire Libre</title>
+  <title>365days+1 — Salón de Arte</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,16 +14,15 @@
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; cursor: none !important; }
-    html, body { width: 100vw; height: 100vh; overflow: hidden; background: #6e6e6e; font-family: "Plus Jakarta Sans", sans-serif; color: #fff; }
+    html, body { width: 100vw; height: 100vh; overflow: hidden; background: #d4cfc8; font-family: "Plus Jakarta Sans", sans-serif; color: #fff; }
     #webgl-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 1; display: block; }
-    .film-grain { position: fixed; inset: 0; z-index: 4; pointer-events: none; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
+    .film-grain { position: fixed; inset: 0; z-index: 4; pointer-events: none; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
 
-    /* Overlay de inicio */
     #start-overlay {
       position: fixed;
       inset: 0;
       z-index: 100;
-      background: rgba(10, 10, 10, 0.85);
+      background: rgba(20, 18, 16, 0.92);
       backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
@@ -32,31 +31,28 @@
       transition: opacity 1.2s ease;
       pointer-events: auto;
     }
-    #start-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
+    #start-overlay.hidden { opacity: 0; pointer-events: none; }
     #start-overlay h1 {
       font-size: clamp(3rem, 8vw, 6rem);
       font-weight: 800;
       letter-spacing: -0.04em;
-      background: linear-gradient(135deg, #f7f6f2 0%, #c0b8a8 100%);
+      background: linear-gradient(135deg, #f0ece6 0%, #b8b0a0 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 60px rgba(255,255,255,0.15);
+      text-shadow: 0 0 60px rgba(255,255,255,0.1);
       margin-bottom: 0.5rem;
     }
     #start-overlay .sub {
       font-size: clamp(1rem, 2vw, 1.6rem);
       font-weight: 300;
-      color: rgba(255,255,255,0.6);
+      color: rgba(255,255,255,0.5);
       letter-spacing: 0.3em;
       margin-bottom: 3rem;
       text-transform: uppercase;
     }
     #start-btn {
       padding: 1.2rem 3.5rem;
-      border: 1.5px solid rgba(255,255,255,0.3);
+      border: 1.5px solid rgba(255,255,255,0.25);
       border-radius: 60px;
       background: rgba(255,255,255,0.05);
       color: #fff;
@@ -68,15 +64,8 @@
       backdrop-filter: blur(4px);
       font-family: "Plus Jakarta Sans", sans-serif;
     }
-    #start-btn:hover {
-      background: #fff;
-      color: #111;
-      transform: scale(1.05);
-      border-color: #fff;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    }
+    #start-btn:hover { background: #fff; color: #111; transform: scale(1.05); border-color: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
 
-    /* Cursor */
     #fluid-cursor { position: fixed; top: 0; left: 0; width: 8px; height: 8px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); box-shadow: 0 0 12px rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; transition: width 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease, box-shadow 0.3s ease; }
     #cursor-arrow-icon { width: 26px; height: 26px; stroke: #111; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transform: scale(0.4); transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     #fluid-cursor.bubble-mode { width: 76px; height: 76px; background: rgba(255,255,255,0.96); box-shadow: 0 15px 40px rgba(0,0,0,0.35); }
@@ -88,7 +77,6 @@
     .nav-arrow-glyph { width: 42px; height: 42px; stroke: rgba(255,255,255,0.65); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: opacity 0.25s ease, transform 0.25s ease; }
     .nav-arrow-hitbox:hover .nav-arrow-glyph { opacity: 0; transform: scale(0.8); }
 
-    /* HUD */
     .hud-layer { position: fixed; inset: 0; z-index: 20; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: clamp(1.8rem, 3.2vw, 2.8rem) clamp(2rem, 3.8vw, 3.4rem); transition: opacity 0.4s ease; }
     body.in-info-space .hud-layer { opacity: 0; pointer-events: none; }
     .hud-top { display: flex; justify-content: space-between; align-items: flex-start; }
@@ -124,7 +112,6 @@
     .bar:nth-child(4) { height: 50%; animation-delay: 0.45s; }
     @keyframes barJump { 0%, 100% { transform: scaleY(0.25); transform-origin: bottom; } 50% { transform: scaleY(1); transform-origin: bottom; } }
 
-    /* Panel de información */
     #info-space { position: fixed; inset: 0; z-index: 50; background: #f7f6f2; color: #1a1a1a; display: flex; align-items: center; justify-content: center; padding: clamp(2rem, 5vw, 5rem); opacity: 0; pointer-events: none; transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1); }
     #info-space.active { opacity: 1; pointer-events: auto; }
     .info-container { width: 100%; max-width: 1200px; display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
@@ -152,14 +139,12 @@
   <canvas id="webgl-canvas"></canvas>
   <div class="film-grain"></div>
 
-  <!-- Overlay de inicio -->
   <div id="start-overlay">
     <h1>365days⁺¹</h1>
-    <div class="sub">Galería al Aire Libre</div>
+    <div class="sub">Salón de Arte</div>
     <button id="start-btn">EXPLORAR</button>
   </div>
 
-  <!-- Flechas -->
   <div class="nav-arrow-hitbox arrow-left-box" id="btnPrev">
     <svg class="nav-arrow-glyph" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
   </div>
@@ -173,7 +158,6 @@
     </svg>
   </div>
 
-  <!-- HUD -->
   <div class="hud-layer" id="hudLayer">
     <div class="hud-top">
       <div class="brand-box">
@@ -214,7 +198,6 @@
     </div>
   </div>
 
-  <!-- Info modal -->
   <div id="info-space">
     <div class="info-close-btn" id="btnCloseInfo" title="Volver (ESC)">
       <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -245,10 +228,10 @@
     // ---------- CONFIGURACIÓN ----------
     const TOTAL_DAYS = 365;
     const UNIQUE_IMAGES = 8;
-    const GALLERY_RADIUS = 50; // radio grande para 365 cuadros
-    const FRAME_W = 0.9;
-    const FRAME_H = 1.2;
-    const FRAME_D = 0.05;
+    const GALLERY_RADIUS = 18;   // radio de la sala
+    const FRAME_W = 1.5;
+    const FRAME_H = 2.0;
+    const FRAME_D = 0.07;
 
     // ---------- CARGAR IMÁGENES ----------
     const textureCache = [];
@@ -378,6 +361,33 @@
       return new THREE.CanvasTexture(cv);
     }
 
+    // ---------- SUELO DE MADERA ----------
+    function createWoodTexture() {
+      const c = document.createElement('canvas');
+      c.width = 1024; c.height = 1024;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#b8a28c';
+      ctx.fillRect(0, 0, c.width, c.height);
+      for (let i=0; i<200; i++) {
+        const x = Math.random()*c.width, y = Math.random()*c.height;
+        ctx.strokeStyle = `rgba(80,60,40,${0.15+Math.random()*0.3})`;
+        ctx.lineWidth = 2+Math.random()*8;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.bezierCurveTo(
+          x+(Math.random()-0.5)*120, y+(Math.random()-0.5)*120,
+          x+(Math.random()-0.5)*120, y+(Math.random()-0.5)*120,
+          x+(Math.random()-0.5)*250, y+(Math.random()-0.5)*250
+        );
+        ctx.stroke();
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(6, 6);
+      tex.anisotropy = 16;
+      return tex;
+    }
+
     // ---------- ESCENA THREE.JS ----------
     const canvas = document.getElementById('webgl-canvas');
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
@@ -385,112 +395,104 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
     if (THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
     else if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x8ecae6);
-    scene.fog = new THREE.FogExp2(0x8ecae6, 0.0035);
+    scene.background = new THREE.Color(0xd4cfc8);
+    scene.fog = new THREE.FogExp2(0xd4cfc8, 0.008);
 
-    const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 200);
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 120);
 
     // ---------- ILUMINACIÓN ----------
-    const ambLight = new THREE.AmbientLight(0xffffff, 0.6);
+    const ambLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambLight);
-    const sunLight = new THREE.DirectionalLight(0xfff5e6, 1.2);
-    sunLight.position.set(30, 50, 20);
-    sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 2048;
-    sunLight.shadow.mapSize.height = 2048;
-    sunLight.shadow.camera.near = 0.5;
-    sunLight.shadow.camera.far = 120;
-    sunLight.shadow.camera.left = -60;
-    sunLight.shadow.camera.right = 60;
-    sunLight.shadow.camera.top = 60;
-    sunLight.shadow.camera.bottom = -60;
-    scene.add(sunLight);
-    const fillLight = new THREE.DirectionalLight(0x88aaff, 0.4);
-    fillLight.position.set(-30, 20, -30);
+
+    // Luz principal desde arriba
+    const mainLight = new THREE.DirectionalLight(0xfff5e6, 1.0);
+    mainLight.position.set(0, 12, 5);
+    mainLight.castShadow = true;
+    mainLight.shadow.mapSize.width = 2048;
+    mainLight.shadow.mapSize.height = 2048;
+    mainLight.shadow.camera.near = 0.5;
+    mainLight.shadow.camera.far = 30;
+    mainLight.shadow.camera.left = -20;
+    mainLight.shadow.camera.right = 20;
+    mainLight.shadow.camera.top = 20;
+    mainLight.shadow.camera.bottom = -20;
+    scene.add(mainLight);
+
+    const fillLight = new THREE.DirectionalLight(0xccddff, 0.3);
+    fillLight.position.set(-10, 5, -10);
     scene.add(fillLight);
 
-    // ---------- SUELO DE CÉSPED ----------
-    function createGrassTexture() {
-      const c = document.createElement('canvas');
-      c.width = 1024; c.height = 1024;
-      const ctx = c.getContext('2d');
-      // Base verde
-      ctx.fillStyle = '#5a8f4c';
-      ctx.fillRect(0, 0, c.width, c.height);
-      // Briznas de hierba
-      for (let i=0; i<8000; i++) {
-        const x = Math.random()*c.width, y = Math.random()*c.height;
-        const h = 4 + Math.random()*12;
-        const w = 1 + Math.random()*2;
-        const shade = 0.6 + Math.random()*0.4;
-        const g = Math.floor(120 + Math.random()*80);
-        ctx.strokeStyle = `rgb(${Math.floor(40+Math.random()*30)}, ${g}, ${Math.floor(40+Math.random()*30)})`;
-        ctx.lineWidth = w;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + (Math.random()-0.5)*6, y - h);
-        ctx.stroke();
-      }
-      // Pequeñas flores
-      for (let i=0; i<120; i++) {
-        const x = Math.random()*c.width, y = Math.random()*c.height;
-        const r = 2 + Math.random()*4;
-        const col = ['#ffd966','#f4a261','#e76f51','#e9c46a','#a8dadc'][Math.floor(Math.random()*5)];
-        ctx.fillStyle = col;
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI*2);
-        ctx.fill();
-      }
-      const tex = new THREE.CanvasTexture(c);
-      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-      tex.repeat.set(20, 20);
-      tex.anisotropy = 16;
-      return tex;
-    }
+    // Focos puntuales para dar calidez
+    const spotLight = new THREE.PointLight(0xffdd99, 0.6, 30);
+    spotLight.position.set(0, 6, 0);
+    scene.add(spotLight);
 
-    const floorGeo = new THREE.PlaneGeometry(200, 200);
-    const floorMat = new THREE.MeshStandardMaterial({ map: createGrassTexture(), roughness: 0.8, metalness: 0.0 });
+    // ---------- SUELO ----------
+    const floorGeo = new THREE.PlaneGeometry(50, 50);
+    const floorMat = new THREE.MeshStandardMaterial({ map: createWoodTexture(), roughness: 0.6, metalness: 0.05 });
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
     floorMesh.rotation.x = -Math.PI/2;
     floorMesh.receiveShadow = true;
-    floorMesh.position.y = -0.01;
+    floorMesh.position.y = 0;
     scene.add(floorMesh);
 
-    // ---------- CONSTRUIR 365 CUADROS ----------
+    // ---------- PARED CILÍNDRICA ----------
+    const wallHeight = 5.5;
+    const wallGeo = new THREE.CylinderGeometry(GALLERY_RADIUS, GALLERY_RADIUS, wallHeight, 64, 1, true);
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0xe8e0d8, roughness: 0.9, side: THREE.DoubleSide });
+    const wallMesh = new THREE.Mesh(wallGeo, wallMat);
+    wallMesh.position.y = wallHeight/2;
+    wallMesh.receiveShadow = true;
+    scene.add(wallMesh);
+
+    // ---------- TECHO ----------
+    const ceilingGeo = new THREE.CircleGeometry(GALLERY_RADIUS, 64);
+    const ceilingMat = new THREE.MeshStandardMaterial({ color: 0xf0ece6, roughness: 0.8, side: THREE.BackSide });
+    const ceilingMesh = new THREE.Mesh(ceilingGeo, ceilingMat);
+    ceilingMesh.rotation.x = -Math.PI/2;
+    ceilingMesh.position.y = wallHeight;
+    scene.add(ceilingMesh);
+
+    // ---------- CONSTRUIR CUADROS ----------
     const interactiveMeshes = [];
     const outerGeo = new THREE.BoxGeometry(FRAME_W, FRAME_H, FRAME_D);
     const outerMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.4, metalness: 0.2 });
-    const matGeo = new THREE.PlaneGeometry(FRAME_W - 0.04, FRAME_H - 0.04);
+    const matGeo = new THREE.PlaneGeometry(FRAME_W - 0.06, FRAME_H - 0.06);
     const matMat = new THREE.MeshBasicMaterial({ color: 0xe8e0d8 });
-    const canvasGeo = new THREE.PlaneGeometry(FRAME_W - 0.12, FRAME_H - 0.12);
+    const canvasGeo = new THREE.PlaneGeometry(FRAME_W - 0.16, FRAME_H - 0.16);
     const dropShadowTex = createDropShadowTexture();
     const spotlightTex = createSpotlightTexture();
     const shadowGeo = new THREE.PlaneGeometry(FRAME_W * 1.6, FRAME_H * 1.6);
-    const shadowMat = new THREE.MeshBasicMaterial({ map: dropShadowTex, transparent: true, opacity: 0.6, depthWrite: false });
+    const shadowMat = new THREE.MeshBasicMaterial({ map: dropShadowTex, transparent: true, opacity: 0.5, depthWrite: false });
     const spotHaloGeo = new THREE.PlaneGeometry(FRAME_W * 1.4, FRAME_W * 1.4);
-    const spotHaloMat = new THREE.MeshBasicMaterial({ map: spotlightTex, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false });
+    const spotHaloMat = new THREE.MeshBasicMaterial({ map: spotlightTex, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false });
+
+    // Altura de los cuadros (centro a 1.6 m del suelo)
+    const paintingY = 1.6;
 
     for (let i = 0; i < TOTAL_DAYS; i++) {
       const imgNum = (i % UNIQUE_IMAGES) + 1;
       const angle = (i / TOTAL_DAYS) * Math.PI * 2;
       const container = new THREE.Group();
-      const x = Math.sin(angle) * GALLERY_RADIUS;
-      const z = Math.cos(angle) * GALLERY_RADIUS;
-      container.position.set(x, 1.6, z);
-      container.rotation.y = angle + Math.PI;
+      const x = Math.sin(angle) * (GALLERY_RADIUS - 0.2);
+      const z = Math.cos(angle) * (GALLERY_RADIUS - 0.2);
+      container.position.set(x, paintingY, z);
+      container.rotation.y = angle + Math.PI; // mirando hacia el centro
 
-      // Sombra
+      // Sombra en la pared
       const shadow = new THREE.Mesh(shadowGeo, shadowMat);
-      shadow.position.set(0, -0.12, -0.03);
+      shadow.position.set(0, 0, -0.02);
       container.add(shadow);
 
-      // Halo de luz
+      // Halo
       const halo = new THREE.Mesh(spotHaloGeo, spotHaloMat);
-      halo.position.set(0, FRAME_H/2 + 0.2, -0.02);
+      halo.position.set(0, FRAME_H/2 + 0.15, -0.02);
       container.add(halo);
 
       // Marco
@@ -504,24 +506,24 @@
       container.add(pp);
 
       // Lienzo
-      const canvasMat = new THREE.MeshStandardMaterial({ map: textureCache[imgNum], roughness: 0.6, metalness: 0.05 });
+      const canvasMat = new THREE.MeshStandardMaterial({ map: textureCache[imgNum], roughness: 0.5, metalness: 0.05 });
       const canvasMesh = new THREE.Mesh(canvasGeo, canvasMat);
       canvasMesh.position.z = FRAME_D/2 + 0.004;
       canvasMesh.userData = { index: i, imgNum: imgNum };
       container.add(canvasMesh);
       interactiveMeshes.push(canvasMesh);
 
-      // Rótulo "The beginning" / "The end" en los extremos
+      // Rótulos "The beginning" y "The end"
       if (i === 0) {
         const tex = createFloatingTextTexture("The beginning");
-        const g = new THREE.PlaneGeometry(1.8, 0.45);
+        const g = new THREE.PlaneGeometry(2.0, 0.5);
         const m = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false });
         const mesh = new THREE.Mesh(g, m);
         mesh.position.set(0, FRAME_H/2 + 0.5, 0.04);
         container.add(mesh);
       } else if (i === TOTAL_DAYS - 1) {
         const tex = createFloatingTextTexture("The end");
-        const g = new THREE.PlaneGeometry(1.8, 0.45);
+        const g = new THREE.PlaneGeometry(2.0, 0.5);
         const m = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false });
         const mesh = new THREE.Mesh(g, m);
         mesh.position.set(0, FRAME_H/2 + 0.5, 0.04);
@@ -532,49 +534,53 @@
     }
 
     // ---------- CÁMARA Y CONTROLES ----------
-    const player = { pos: new THREE.Vector3(0, 1.7, 0), vel: new THREE.Vector3(), yaw: 0, pitch: 0, walkTime: 0 };
+    const player = { pos: new THREE.Vector3(0, 1.6, 0), vel: new THREE.Vector3(), yaw: 0, pitch: 0, walkTime: 0 };
     let targetYaw = 0, targetPitch = 0;
     let isDragging = false, startX = 0, startY = 0;
     let inInfoSpace = false;
     let startAnimationDone = false;
     const keys = { w: false, a: false, s: false, d: false };
 
-    // Posición inicial para la animación (cámara elevada)
-    const startCamPos = new THREE.Vector3(0, 25, 45);
-    const startTarget = new THREE.Vector3(0, 0, 0);
+    // Posición final tras la animación: ver 5 cuadros (ángulo 0, distancia 8m)
+    const finalCamPos = new THREE.Vector3(0, 1.7, 8.5);
+    const finalLookAt = new THREE.Vector3(0, 1.6, 0);
 
     // Al hacer clic en "EXPLORAR"
     document.getElementById('start-btn').addEventListener('click', () => {
       const overlay = document.getElementById('start-overlay');
       overlay.classList.add('hidden');
-      // Animación de la cámara desde el centro hacia la vista elevada
-      camera.position.set(0, 1.7, 0);
-      camera.lookAt(0, 0, 0);
+      // Iniciar desde el centro mirando al frente (ángulo 0)
+      camera.position.set(0, 1.6, 0);
+      camera.lookAt(0, 1.6, 0);
+      targetYaw = 0;
+      targetPitch = 0;
+      player.yaw = 0;
+      player.pitch = 0;
+
+      // Animación: moverse hacia atrás hasta finalCamPos
       gsap.to(camera.position, {
-        x: startCamPos.x,
-        y: startCamPos.y,
-        z: startCamPos.z,
+        x: finalCamPos.x,
+        y: finalCamPos.y,
+        z: finalCamPos.z,
         duration: 2.5,
         ease: "power3.inOut",
         onUpdate: () => {
-          camera.lookAt(0, 0, 0);
+          camera.lookAt(finalLookAt);
         },
         onComplete: () => {
           startAnimationDone = true;
-          // Ajustar la cámara a la posición del jugador después de la animación
-          player.pos.set(0, 1.7, 0);
+          // Sincronizar el jugador con la posición final
+          player.pos.copy(finalCamPos);
+          player.pos.y = 1.7;
           camera.position.copy(player.pos);
           camera.rotation.set(0,0,0);
-          camera.rotation.y = player.yaw;
-          camera.rotation.x = player.pitch;
+          camera.rotation.y = 0;
+          camera.rotation.x = 0;
+          player.yaw = 0;
+          player.pitch = 0;
+          targetYaw = 0;
+          targetPitch = 0;
         }
-      });
-      // También rotar la cámara para que mire al centro
-      gsap.to(camera.rotation, {
-        y: 0,
-        x: 0,
-        duration: 2.5,
-        ease: "power3.inOut"
       });
     });
 
@@ -648,7 +654,7 @@
 
       const targetPos = new THREE.Vector3();
       targetMesh.getWorldPosition(targetPos);
-      const camTargetPos = targetPos.clone().add(targetMesh.getWorldDirection(new THREE.Vector3()).multiplyScalar(1.8));
+      const camTargetPos = targetPos.clone().add(targetMesh.getWorldDirection(new THREE.Vector3()).multiplyScalar(2.0));
       gsap.to(camera.position, { x: camTargetPos.x, y: camTargetPos.y, z: camTargetPos.z, duration: 0.9, ease: "power2.inOut" });
       setTimeout(() => { infoSpace.classList.add('active'); }, 450);
     }
@@ -710,21 +716,21 @@
         if (moveDir.lengthSq() > 0) {
           moveDir.normalize();
           moveDir.applyAxisAngle(new THREE.Vector3(0,1,0), player.yaw);
-          const speed = 6.0;
+          const speed = 5.0;
           player.vel.x += moveDir.x * speed * dt * 8.0;
           player.vel.z += moveDir.z * speed * dt * 8.0;
           player.walkTime += dt * 9.0;
-          player.pos.y = 1.7 + Math.sin(player.walkTime) * 0.03;
+          player.pos.y = 1.6 + Math.sin(player.walkTime) * 0.025;
         } else {
-          player.pos.y += (1.7 - player.pos.y) * 0.1;
+          player.pos.y += (1.6 - player.pos.y) * 0.1;
         }
         player.vel.x *= 0.86;
         player.vel.z *= 0.86;
         player.pos.x += player.vel.x * dt;
         player.pos.z += player.vel.z * dt;
 
-        // Límite dentro del círculo de cuadros (radio - 2m)
-        const maxDist = GALLERY_RADIUS - 2.2;
+        // Límite dentro de la sala (radio - 1m)
+        const maxDist = GALLERY_RADIUS - 1.5;
         const dist = Math.sqrt(player.pos.x*player.pos.x + player.pos.z*player.pos.z);
         if (dist > maxDist) { player.pos.x = (player.pos.x/dist)*maxDist; player.pos.z = (player.pos.z/dist)*maxDist; }
 
@@ -745,10 +751,10 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // Pequeño ajuste: si la animación de inicio aún no se ha completado, la cámara mira al centro
+    // Si no se ha iniciado la animación, la cámara mira al centro
     if (!startAnimationDone) {
-      camera.position.set(0, 1.7, 0);
-      camera.lookAt(0,0,0);
+      camera.position.set(0, 1.6, 0);
+      camera.lookAt(0, 1.6, 0);
     }
   </script>
 </body>
