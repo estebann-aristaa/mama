@@ -552,7 +552,7 @@
     </div>
 
     <div class="info-container">
-      <!-- Columna Izquierda: Imagen Temática de Internet -->
+      <!-- Columna Izquierda: Imagen Temática -->
       <div class="info-left-col">
         <div class="info-artwork-box">
           <img class="info-artwork-img" id="infoImg" src="" alt="Fotografía temática del experimento" />
@@ -620,12 +620,12 @@
     const CAMERA_Y = 1.50;
     const CAM_DIST = 3.25;
 
-    // 8 FOTOGRAFÍAS TEMÁTICAS DIRECTAS PARA EL MODAL
+    // 8 FOTOGRAFÍAS TEMÁTICAS PARA EL MODAL
     const MODAL_WEB_IMAGES = [
-      // 1. Fotografía de Stanley Milgram (Yale 1963 / 1974)
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Stanley_Milgram_1954.jpg/800px-Stanley_Milgram_1954.jpg",
-      // 2. Experimento de Juicio Visual y Comparación de Líneas de Solomon Asch
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Asch_experiment.svg/800px-Asch_experiment.svg.png",
+      // 1. Imagen local modal 1
+      "modal1.jpg",
+      // 2. Imagen local modal 2
+      "modal2.jpg",
       // 3. Montaje Experimental de Laboratorio (Yale)
       "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80",
       // 4. Consola de Interruptores Eléctricos (15V a 450V)
@@ -1147,7 +1147,7 @@
       infoMainPoints.innerHTML = theme.points;
       infoAnalysisText.innerHTML = theme.analysis;
 
-      // ADENTRO EN EL MODAL: FOTOGRAFÍAS REALES DIRECTAS
+      // ASIGNACIÓN DE IMÁGENES DEL MODAL
       infoImg.src = MODAL_WEB_IMAGES[themeIdx];
     }
 
