@@ -65,6 +65,40 @@
       background: radial-gradient(ellipse at center, transparent 45%, rgba(20, 22, 26, 0.45) 100%);
     }
 
+    /* ===== TEMPORIZADOR ULTRA-DISCRETO Y CHIQUITO ===== */
+    #session-timer {
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      z-index: 120;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(12, 14, 18, 0.45);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      padding: 3px 9px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-family: 'Space Grotesk', monospace, sans-serif;
+      font-size: 0.68rem; /* Tamaño muy discreto */
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: rgba(255, 255, 255, 0.5); /* Tono suave semitransparente */
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+    }
+    #session-timer.visible {
+      opacity: 1;
+    }
+    #session-timer .timer-dot {
+      width: 4px;
+      height: 4px;
+      background: rgba(56, 189, 248, 0.65);
+      border-radius: 50%;
+    }
+
     /* ===== TÍTULO FLOTANTE EN SALA ===== */
     #floating-art-title {
       position: fixed;
@@ -510,6 +544,12 @@
   <div class="film-grain"></div>
   <div class="vignette"></div>
 
+  <!-- TEMPORIZADOR DISCRETO -->
+  <div id="session-timer">
+    <div class="timer-dot"></div>
+    <span id="timer-text">00:00</span>
+  </div>
+
   <!-- Título flotante encima del cuadro enfocado -->
   <div id="floating-art-title">1. El Investigador y el Conflicto de Obediencia</div>
 
@@ -604,11 +644,45 @@
     </div>
   </div>
 
-  <!-- ===== SCRIPT 3D ===== -->
+  <!-- ===== SCRIPT 3D Y LÓGICA ===== -->
   <script type="module">
     import * as THREE from 'three';
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
+    // ===== LÓGICA DEL TEMPORIZADOR AL MOVER EL MOUSE O CLIC EN CTA =====
+    let timerStarted = false;
+    let timerElapsedSeconds = 0;
+    const timerElem = document.getElementById('session-timer');
+    const timerText = document.getElementById('timer-text');
+
+    function startTimer() {
+      if (timerStarted) return;
+      timerStarted = true;
+      if (timerElem) timerElem.classList.add('visible');
+
+      setInterval(() => {
+        timerElapsedSeconds++;
+        const mins = Math.floor(timerElapsedSeconds / 60);
+        const secs = timerElapsedSeconds % 60;
+        if (timerText) {
+          timerText.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+      }, 1000);
+
+      window.removeEventListener('mousemove', onFirstInteraction);
+      window.removeEventListener('pointermove', onFirstInteraction);
+      window.removeEventListener('touchmove', onFirstInteraction);
+    }
+
+    function onFirstInteraction() {
+      startTimer();
+    }
+
+    window.addEventListener('mousemove', onFirstInteraction, { passive: true });
+    window.addEventListener('pointermove', onFirstInteraction, { passive: true });
+    window.addEventListener('touchmove', onFirstInteraction, { passive: true });
+
+    // Constantes de Escena
     const TOTAL_DAYS = 366;
     const UNIQUE_IMAGES = 8;
     const GALLERY_RADIUS = 100;
@@ -622,25 +696,17 @@
 
     // 8 FOTOGRAFÍAS TEMÁTICAS PARA EL MODAL
     const MODAL_WEB_IMAGES = [
-      // 1. Imagen local modal 1
       "modal1.jpg",
-      // 2. Imagen local modal 2
       "modal2.jpg",
-      // 3. Montaje Experimental de Laboratorio (Yale)
       "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80",
-      // 4. Consola de Interruptores Eléctricos (15V a 450V)
       "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=900&q=80",
-      // 5. Gráficas y Métricas Cuantitativas (65% de Sumisión)
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80",
-      // 6. John Levine / Levine & Pavelchak (Actualizado)
       "johnlevine.jpg",
-      // 7. Jerarquía y Estructura del Estado Agéntico
       "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=900&q=80",
-      // 8. La Bata Blanca Digital y Algoritmos (Moscovici / Innovación)
       "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80"
     ];
 
-    // CONTENIDO ACADÉMICO LIMPIO
+    // CONTENIDO ACADÉMICO
     const THEMES = [
       {
         badge: 'CONTEXTO Y AUTOR',
@@ -874,10 +940,9 @@
       return texture;
     }
 
-    // CARGA DE TUS IMÁGENES LOCALES (imagen1.png a imagen8.png) PARA LOS CUADROS DE LA PARED 3D
+    // CARGA DE TEXTURAS DE LOS CUADROS
     const textureLoader = new THREE.TextureLoader();
     textureLoader.setCrossOrigin('anonymous');
-
     const textureCache = [];
 
     function loadWallTexture(imgNum) {
@@ -964,7 +1029,7 @@
     railMesh.position.y = WALL_HEIGHT - 0.25;
     scene.add(railMesh);
 
-    // INSTALACIÓN DE LOS CUADROS
+    // INSTALACIÓN DE CUADROS
     const interactiveMeshes = [];
     const outerGeo = new THREE.BoxGeometry(FRAME_W, FRAME_H, FRAME_D);
     const outerMat = new THREE.MeshStandardMaterial({
@@ -1041,6 +1106,7 @@
     const keys = { w: false, a: false, s: false, d: false };
 
     document.getElementById('intro-btn').addEventListener('click', () => {
+      startTimer();
       document.getElementById('intro-overlay').classList.add('hidden');
       camera.position.set(0, CAMERA_Y, 0);
       camera.lookAt(0, CAMERA_Y, 0);
@@ -1147,7 +1213,6 @@
       infoMainPoints.innerHTML = theme.points;
       infoAnalysisText.innerHTML = theme.analysis;
 
-      // ASIGNACIÓN DE IMÁGENES DEL MODAL
       infoImg.src = MODAL_WEB_IMAGES[themeIdx];
     }
 
